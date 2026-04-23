@@ -1,84 +1,26 @@
-const sampleQuestionBank = `questions:
-  - id: cardiac-cycle-01
-    prompt: "Which event occurs during ventricular systole?"
-    choices:
-      - "Atrial contraction"
-      - "Ventricular contraction"
-      - "Passive ventricular filling"
-      - "AV valves opening"
-    correct_choice: 1
-    explanation: "Ventricular systole is the contraction phase of the ventricles."
-    citation:
-      source_file: "lecture_05_cardiac_physiology.pdf"
-      page: 12
-    tags:
-      - physiology
-      - cardiac-cycle
+const builtInQuestionBank = {
+  label: "ECE 567",
+  path: "question-bank-ECE567.yaml",
+};
 
-  - id: membrane-transport-01
-    prompt: "Which transport process moves water across a selectively permeable membrane?"
-    choices:
-      - "Diffusion"
-      - "Filtration"
-      - "Osmosis"
-      - "Active transport"
-    correct_choice: 2
-    explanation: "Osmosis specifically describes the movement of water across a selectively permeable membrane."
-    citation:
-      source_file: "lecture_03_membranes.pdf"
-      page: 8
-    tags:
-      - physiology
-      - membranes
+const maxCommonTags = 15;
 
-  - id: action-potential-01
-    prompt: "What causes the rapid depolarization phase of a neuronal action potential?"
+const schemaExample = `questions:
+  - id: unique-short-id
+    prompt: 'What does \\(V_k(x)\\) represent?'
     choices:
-      - "Potassium leaving the cell"
-      - "Sodium entering the cell"
-      - "Calcium leaving the cell"
-      - "Chloride entering the cell"
-    correct_choice: 1
-    explanation: "Rapid depolarization occurs when voltage-gated sodium channels open and sodium rushes into the neuron."
-    citation:
-      source_file: "lecture_07_neurophysiology.pdf"
-      page: 14
-    tags:
-      - physiology
-      - neuro
-
-  - id: derivatives-01
-    prompt: 'What is \\( \\frac{d}{dx}\\sin(x) \\)?'
-    choices:
-      - '\\( \\cos(x) \\)'
-      - '\\( -\\cos(x) \\)'
-      - '\\( \\tan(x) \\)'
-      - '\\( -\\sin(x) \\)'
+      - "Choice A"
+      - "Choice B"
+      - "Choice C"
+      - "Choice D"
     correct_choice: 0
-    explanation: 'Using the standard derivative rule, $$\\frac{d}{dx}\\sin(x) = \\cos(x).$$'
+    explanation: "One or two sentences explaining the answer."
     citation:
-      source_file: "calculus_review_notes.pdf"
-      page: 3
+      source_file: "lecture_notes.pdf"
+      page: 1
     tags:
-      - calculus
-      - derivatives
-
-  - id: limits-01
-    prompt: 'If $$\\lim_{x \\to a^-} f(x) = \\lim_{x \\to a^+} f(x) = L,$$ what does that imply?'
-    choices:
-      - 'The function must be differentiable at \\(a\\)'
-      - 'The two-sided limit \\( \\lim_{x \\to a} f(x) \\) exists'
-      - 'The function value must equal \\(0\\)'
-      - 'The derivative is undefined at \\(a\\)'
-    correct_choice: 1
-    explanation: 'A two-sided limit exists when $$\\lim_{x \\to a^-} f(x) = \\lim_{x \\to a^+} f(x),$$ so both one-sided limits agree on the same value.'
-    citation:
-      source_file: "calculus_review_notes.pdf"
-      page: 6
-    tags:
-      - calculus
-      - limits
-`;
+      - topic
+      - subtopic`;
 
 const state = {
   bank: null,
@@ -88,6 +30,7 @@ const state = {
     message: "No question bank loaded yet.",
   },
   selectedTags: new Set(),
+  tagSearch: "",
   session: null,
 };
 
@@ -97,7 +40,7 @@ let mathTypesetPromise = Promise.resolve();
 document.addEventListener("DOMContentLoaded", () => {
   captureElements();
   bindEvents();
-  elements.schemaPreview.textContent = sampleQuestionBank.trim();
+  elements.schemaPreview.textContent = schemaExample.trim();
   render();
 });
 
@@ -105,9 +48,10 @@ function captureElements() {
   elements.bankFile = document.getElementById("bank-file");
   elements.bankStatus = document.getElementById("bank-status");
   elements.schemaPreview = document.getElementById("schema-preview");
-  elements.loadSample = document.getElementById("load-sample");
+  elements.loadEce567 = document.getElementById("load-ece-567");
   elements.selectAllTags = document.getElementById("select-all-tags");
   elements.clearTags = document.getElementById("clear-tags");
+  elements.tagSearch = document.getElementById("tag-search");
   elements.tagList = document.getElementById("tag-list");
   elements.selectedCount = document.getElementById("selected-count");
   elements.startSession = document.getElementById("start-session");
@@ -126,6 +70,7 @@ function captureElements() {
   elements.questionCitation = document.getElementById("question-citation");
   elements.choiceList = document.getElementById("choice-list");
   elements.feedbackCard = document.getElementById("feedback-card");
+  elements.feedbackIcon = document.getElementById("feedback-icon");
   elements.feedbackTitle = document.getElementById("feedback-title");
   elements.feedbackAnswer = document.getElementById("feedback-answer");
   elements.feedbackExplanation = document.getElementById("feedback-explanation");
@@ -140,11 +85,10 @@ function captureElements() {
 
 function bindEvents() {
   elements.bankFile.addEventListener("change", handleFileLoad);
-  elements.loadSample.addEventListener("click", () => {
-    loadQuestionBank(sampleQuestionBank, "question-bank.sample.yaml");
-  });
+  elements.loadEce567.addEventListener("click", loadBuiltInQuestionBank);
   elements.selectAllTags.addEventListener("click", selectAllTags);
   elements.clearTags.addEventListener("click", clearAllTags);
+  elements.tagSearch.addEventListener("input", handleTagSearch);
   elements.startSession.addEventListener("click", startSession);
   elements.nextQuestion.addEventListener("click", advanceSession);
   elements.restartSession.addEventListener("click", startSession);
@@ -194,13 +138,38 @@ async function handleFileLoad(event) {
   elements.bankFile.value = "";
 }
 
+async function loadBuiltInQuestionBank() {
+  try {
+    setBankStatus(
+      "muted",
+      `Loading ${builtInQuestionBank.label} from ${builtInQuestionBank.path}...`,
+    );
+
+    const response = await fetch(builtInQuestionBank.path, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`Could not load ${builtInQuestionBank.path} (${response.status}).`);
+    }
+
+    const text = await response.text();
+    loadQuestionBank(text, builtInQuestionBank.path);
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : "Unknown loading error.";
+    setBankStatus(
+      "error",
+      `Could not load ${builtInQuestionBank.label}. Serve the project with python3 -m http.server 4173, then open http://localhost:4173. ${detail}`,
+    );
+  }
+}
+
 function loadQuestionBank(sourceText, sourceName) {
   try {
     const parsed = parseYaml(sourceText);
     const bank = validateQuestionBank(parsed);
     state.bank = bank;
     state.bankSourceName = sourceName;
-    state.selectedTags = new Set(bank.tags);
+    state.selectedTags = new Set();
+    state.tagSearch = "";
+    elements.tagSearch.value = "";
     state.session = null;
     state.bankStatus = {
       tone: "success",
@@ -213,6 +182,11 @@ function loadQuestionBank(sourceText, sourceName) {
     };
   }
 
+  render();
+}
+
+function setBankStatus(tone, message) {
+  state.bankStatus = { tone, message };
   render();
 }
 
@@ -246,6 +220,7 @@ function renderTags() {
     elements.tagList.textContent = "Load a question bank to choose tags.";
     elements.selectAllTags.disabled = true;
     elements.clearTags.disabled = true;
+    elements.tagSearch.disabled = true;
     return;
   }
 
@@ -253,16 +228,120 @@ function renderTags() {
   elements.tagList.textContent = "";
   elements.selectAllTags.disabled = false;
   elements.clearTags.disabled = false;
+  elements.tagSearch.disabled = false;
 
-  state.bank.tags.forEach((tag) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `tag-chip${state.selectedTags.has(tag) ? " active" : ""}`;
-    button.textContent = tag;
-    button.setAttribute("aria-pressed", state.selectedTags.has(tag) ? "true" : "false");
-    button.addEventListener("click", () => toggleTag(tag));
-    elements.tagList.appendChild(button);
+  const tagItems = state.bank.tags.map((tag) => ({
+    tag,
+    count: state.bank.tagCounts.get(tag) || 0,
+  }));
+  const searchTerm = state.tagSearch.trim().toLowerCase();
+
+  if (searchTerm) {
+    const matchingTags = tagItems.filter(({ tag }) =>
+      tag.toLowerCase().includes(searchTerm),
+    );
+    renderTagGroup(
+      matchingTags.length ? "Matching tags" : "No matching tags",
+      matchingTags,
+      elements.tagList,
+    );
+    return;
+  }
+
+  const commonTags = tagItems.slice(0, maxCommonTags);
+  const specificTags = tagItems.slice(maxCommonTags);
+
+  renderTagGroup("Common tags", commonTags, elements.tagList);
+
+  if (specificTags.length > 0) {
+    const selectedSpecificCount = specificTags.filter(({ tag }) =>
+      state.selectedTags.has(tag),
+    ).length;
+    const details = document.createElement("details");
+    details.className = "tag-details";
+    details.open = selectedSpecificCount > 0;
+
+    const summary = document.createElement("summary");
+    summary.textContent = `Specific tags (${specificTags.length})`;
+    if (selectedSpecificCount > 0) {
+      const selectedNote = document.createElement("span");
+      selectedNote.className = "tag-summary-note";
+      selectedNote.textContent = `${selectedSpecificCount} selected`;
+      summary.appendChild(selectedNote);
+    }
+
+    const detailsBody = document.createElement("div");
+    detailsBody.className = "tag-details-body";
+    renderTagGroup(
+      "Specific tags",
+      specificTags,
+      detailsBody,
+      "These are useful for targeted review but often cover only one or two questions.",
+    );
+
+    details.append(summary, detailsBody);
+    elements.tagList.appendChild(details);
+  }
+}
+
+function renderTagGroup(title, tagItems, container, description = "") {
+  const group = document.createElement("section");
+  group.className = "tag-group";
+
+  const heading = document.createElement("div");
+  heading.className = "tag-group-heading";
+
+  const titleElement = document.createElement("h3");
+  titleElement.textContent = title;
+
+  const countElement = document.createElement("span");
+  countElement.textContent = `${tagItems.length} tag${tagItems.length === 1 ? "" : "s"}`;
+
+  heading.append(titleElement, countElement);
+  group.appendChild(heading);
+
+  if (description) {
+    const descriptionElement = document.createElement("p");
+    descriptionElement.className = "tag-group-description";
+    descriptionElement.textContent = description;
+    group.appendChild(descriptionElement);
+  }
+
+  const chipList = document.createElement("div");
+  chipList.className = "tag-chip-list";
+
+  tagItems.forEach(({ tag, count }) => {
+    chipList.appendChild(createTagButton(tag, count));
   });
+
+  if (tagItems.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.className = "tag-group-description";
+    emptyMessage.textContent = "Try a different search term.";
+    group.appendChild(emptyMessage);
+  } else {
+    group.appendChild(chipList);
+  }
+
+  container.appendChild(group);
+}
+
+function createTagButton(tag, count) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = `tag-chip${state.selectedTags.has(tag) ? " active" : ""}`;
+  button.setAttribute("aria-pressed", state.selectedTags.has(tag) ? "true" : "false");
+  button.addEventListener("click", () => toggleTag(tag));
+
+  const name = document.createElement("span");
+  name.textContent = tag;
+
+  const countBadge = document.createElement("span");
+  countBadge.className = "tag-count";
+  countBadge.textContent = count;
+
+  button.append(name, countBadge);
+  return button;
 }
 
 function renderSelectionSummary() {
@@ -403,8 +482,11 @@ function renderFeedback(question) {
   const answerState = state.session.answerState;
   const correctAnswer = question.choices[question.correctChoice];
   elements.feedbackCard.classList.remove("hidden");
-  elements.feedbackTitle.textContent = answerState.isCorrect ? "Correct" : "Not quite";
-  elements.feedbackAnswer.textContent = `Correct answer: ${correctAnswer}`;
+  elements.feedbackCard.classList.toggle("correct", answerState.isCorrect);
+  elements.feedbackCard.classList.toggle("incorrect", !answerState.isCorrect);
+  elements.feedbackIcon.textContent = answerState.isCorrect ? "OK" : "!";
+  elements.feedbackTitle.textContent = answerState.isCorrect ? "Correct" : "Review this one";
+  elements.feedbackAnswer.textContent = correctAnswer;
   elements.feedbackExplanation.textContent = question.explanation;
   elements.feedbackReview.textContent = answerState.reviewMessage;
 }
@@ -448,15 +530,19 @@ function clearAllTags() {
   render();
 }
 
+function handleTagSearch(event) {
+  state.tagSearch = event.target.value;
+  renderTags();
+}
+
 function getSelectedQuestions() {
   if (!state.bank || state.selectedTags.size === 0) {
     return [];
   }
 
-  return state.bank.questions.filter((question) => {
-    const questionTags = new Set(question.tags);
-    return [...state.selectedTags].every((tag) => questionTags.has(tag));
-  });
+  return state.bank.questions.filter((question) =>
+    question.tags.some((tag) => state.selectedTags.has(tag)),
+  );
 }
 
 function resetSessionForTagChange() {
@@ -534,17 +620,17 @@ function submitAnswer(displayIndex) {
       if (existingReview.streak >= 3) {
         session.reviewStates.delete(question.id);
         session.mastered.add(question.id);
-        reviewMessage = "Recovery complete. This question is done for the rest of the session.";
+        reviewMessage = "Mastered";
         badgeText = "Recovery complete";
       } else {
         existingReview.cooldown = 3;
         existingReview.ticket = ++session.reviewTicket;
-        reviewMessage = `Recovery streak ${existingReview.streak}/3. It will return after 3 other questions.`;
+        reviewMessage = `Progress ${existingReview.streak}/3`;
         badgeText = `Recovery streak ${existingReview.streak}/3`;
       }
     } else {
       session.mastered.add(question.id);
-      reviewMessage = "First-pass success. This question is finished for this session.";
+      reviewMessage = "Mastered";
       badgeText = "Fresh question";
     }
   } else {
@@ -556,8 +642,7 @@ function submitAnswer(displayIndex) {
       cooldown: 3,
       ticket: ++session.reviewTicket,
     });
-    reviewMessage =
-      "This question is back in the queue. It will return after 3 other questions and needs 3 consecutive correct answers to graduate.";
+    reviewMessage = "Needs review";
     badgeText = "Recovery streak 0/3";
   }
 
@@ -804,13 +889,26 @@ function validateQuestionBank(rawValue) {
     };
   });
 
-  const tags = [...new Set(questions.flatMap((question) => question.tags))].sort((left, right) =>
-    left.localeCompare(right),
-  );
+  const tagCounts = new Map();
+  questions.forEach((question) => {
+    question.tags.forEach((tag) => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  });
+
+  const tags = [...tagCounts.keys()].sort((left, right) => {
+    const countDifference = tagCounts.get(right) - tagCounts.get(left);
+    if (countDifference !== 0) {
+      return countDifference;
+    }
+
+    return left.localeCompare(right);
+  });
 
   return {
     questions,
     tags,
+    tagCounts,
     questionMap: new Map(questions.map((question) => [question.id, question])),
   };
 }

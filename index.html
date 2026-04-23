@@ -60,8 +60,8 @@
               type="file"
               accept=".yaml,.yml,text/yaml,text/x-yaml"
             />
-            <button id="load-sample" class="secondary-button" type="button">
-              Load Sample Bank
+            <button id="load-ece-567" class="secondary-button" type="button">
+              Load ECE 567
             </button>
           </div>
 
@@ -95,6 +95,19 @@
               Clear
             </button>
           </div>
+
+          <label class="tag-search-label" for="tag-search">Filter tags</label>
+          <input
+            id="tag-search"
+            class="tag-search"
+            type="search"
+            placeholder="Search tags by chapter, concept, or formula"
+          />
+
+          <p class="tag-help">
+            Common tags are shown first. Narrow, one-off tags are still
+            available under specific tags or through search.
+          </p>
 
           <div id="tag-list" class="tag-list empty">
             Load a question bank to choose tags.
@@ -167,10 +180,22 @@
               class="feedback-card hidden"
               aria-live="polite"
             >
-              <h3 id="feedback-title"></h3>
-              <p id="feedback-answer"></p>
-              <p id="feedback-explanation"></p>
-              <p id="feedback-review"></p>
+              <div class="feedback-heading">
+                <span id="feedback-icon" class="feedback-icon"></span>
+                <div>
+                  <p class="feedback-label">Result</p>
+                  <h3 id="feedback-title"></h3>
+                </div>
+              </div>
+              <div class="feedback-detail">
+                <p class="feedback-label">Correct answer</p>
+                <p id="feedback-answer"></p>
+              </div>
+              <div class="feedback-detail feedback-explanation-block">
+                <p class="feedback-label">Why it matters</p>
+                <p id="feedback-explanation"></p>
+              </div>
+              <p id="feedback-review" class="feedback-review-pill"></p>
               <button id="next-question" class="primary-button" type="button">
                 Continue
               </button>

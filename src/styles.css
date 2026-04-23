@@ -316,9 +316,8 @@ input {
 
 .tag-list {
   margin-top: 18px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  gap: 16px;
   min-height: 52px;
 }
 
@@ -328,6 +327,98 @@ input {
   border: 1px dashed rgba(31, 41, 51, 0.16);
   color: var(--ink-soft);
   align-items: center;
+}
+
+.tag-search-label {
+  display: block;
+  margin-top: 18px;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tag-search {
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(31, 41, 51, 0.14);
+  background: rgba(255, 255, 255, 0.76);
+  color: var(--ink);
+  outline: none;
+}
+
+.tag-search:focus {
+  border-color: rgba(127, 45, 24, 0.36);
+  box-shadow: 0 0 0 4px rgba(179, 72, 45, 0.1);
+}
+
+.tag-help,
+.tag-group-description {
+  margin: 10px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.tag-group,
+.tag-details {
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(31, 41, 51, 0.09);
+  background: rgba(255, 255, 255, 0.46);
+  padding: 14px;
+}
+
+.tag-group-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tag-group-heading h3 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.tag-group-heading span,
+.tag-summary-note {
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+}
+
+.tag-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.tag-details {
+  padding: 0;
+  overflow: hidden;
+}
+
+.tag-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  padding: 14px;
+  font-weight: 800;
+}
+
+.tag-details-body {
+  padding: 0 14px 14px;
+}
+
+.tag-details-body .tag-group {
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .tag-chip,
@@ -340,6 +431,7 @@ input {
 }
 
 .tag-chip {
+  gap: 8px;
   padding: 10px 14px;
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(31, 41, 51, 0.14);
@@ -350,6 +442,23 @@ input {
 .tag-chip.active {
   background: linear-gradient(135deg, rgba(179, 72, 45, 0.14), rgba(127, 45, 24, 0.14));
   border-color: rgba(127, 45, 24, 0.26);
+  color: var(--accent-deep);
+}
+
+.tag-count {
+  display: inline-flex;
+  min-width: 1.55rem;
+  height: 1.55rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(31, 41, 51, 0.08);
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+}
+
+.tag-chip.active .tag-count {
+  background: rgba(127, 45, 24, 0.14);
   color: var(--accent-deep);
 }
 
@@ -533,12 +642,96 @@ input {
 }
 
 .feedback-card {
-  background: linear-gradient(140deg, rgba(255, 255, 255, 0.84), rgba(246, 240, 229, 0.92));
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.9), rgba(246, 240, 229, 0.94));
   border: 1px solid rgba(31, 41, 51, 0.08);
 }
 
+.feedback-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 7px;
+  background: var(--sage);
+}
+
+.feedback-card.incorrect::before {
+  background: var(--accent);
+}
+
+.feedback-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .feedback-card h3 {
+  margin: 0;
   font-size: 1.55rem;
+}
+
+.feedback-icon {
+  display: inline-flex;
+  flex: 0 0 2.4rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(47, 111, 92, 0.14);
+  color: var(--sage);
+  font-weight: 900;
+}
+
+.feedback-card.incorrect .feedback-icon {
+  background: rgba(179, 72, 45, 0.14);
+  color: var(--accent-deep);
+}
+
+.feedback-label {
+  margin: 0 0 6px;
+  color: var(--ink-soft);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.feedback-detail {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(31, 41, 51, 0.07);
+}
+
+.feedback-detail p:last-child {
+  margin-bottom: 0;
+}
+
+.feedback-explanation-block {
+  background: rgba(31, 41, 51, 0.035);
+}
+
+.feedback-review-pill {
+  display: inline-flex;
+  margin: 16px 0 0;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(47, 111, 92, 0.12);
+  color: var(--sage);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.feedback-card.incorrect .feedback-review-pill {
+  background: rgba(179, 72, 45, 0.12);
+  color: var(--accent-deep);
+}
+
+.feedback-card .primary-button {
+  margin-top: 18px;
 }
 
 .completion-card {

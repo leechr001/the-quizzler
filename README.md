@@ -16,20 +16,19 @@ Chris' Overengineered Study Guide is a local-first exam study app that runs enti
 
 ## Getting Started
 
-You can open the app directly in a browser:
-
-1. Open [index.html](/Users/chrislee/Projects/TheQuizzler/index.html)
-2. Click `Load sample bank` or choose your own YAML file
-3. Pick the tags you want to study
-4. Start a quiz session
-
-If your browser is strict about local files, you can also serve the folder locally:
+Serve the folder locally:
 
 ```bash
 python3 -m http.server 4173
 ```
 
 Then visit `http://localhost:4173`.
+
+1. Click `Load ECE 567` to load [question-bank-ECE567.yaml](/Users/chrislee/Projects/TheQuizzler/question-bank-ECE567.yaml), or choose your own YAML file
+2. Pick the tags you want to study
+3. Start a quiz session
+
+The built-in `Load ECE 567` option loads the YAML by relative path, so it needs the local server workflow rather than opening `index.html` directly from disk.
 
 ## Question Bank Format
 
@@ -104,11 +103,10 @@ The app uses a built-in lightweight YAML parser so it can stay dependency-free a
 
 Single-dollar inline math like `$...$` is intentionally not enabled, so normal dollar amounts do not get parsed as equations by accident.
 
-You can start from [question-bank.sample.yaml](/Users/chrislee/Projects/TheQuizzler/question-bank.sample.yaml).
-
 ## Session Rules
 
-- Questions are filtered by all selected tags
+- Questions are filtered by any selected tag
+- No tags are selected by default; common tags are shown first, while narrow tags are available under specific tags or by search
 - Choices are reshuffled every time a question appears
 - Missed questions return after 3 other questions
 - A missed question must be answered correctly 3 times in a row to leave the session
