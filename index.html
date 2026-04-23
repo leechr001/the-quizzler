@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chris' Overengineered Study Guide</title>
+    <link rel="stylesheet" href="src/styles.css" />
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["\\(", "\\)"]],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
+          processEnvironments: true,
+        },
+        options: {
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+        },
+        startup: {
+          typeset: false,
+        },
+      };
+    </script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <div class="background-orb orb-one"></div>
+      <div class="background-orb orb-two"></div>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Local-only study studio</p>
+          <h1>Chris' Overengineered Study Guide</h1>
+          <p class="hero-text">
+            Load a YAML question bank, study by tag, and keep recycling misses
+            until they stick.
+          </p>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Step 1</p>
+              <h2>Load Question Bank</h2>
+            </div>
+          </div>
+
+          <div class="actions-row">
+            <label class="file-picker" for="bank-file">
+              <span>Choose YAML File</span>
+            </label>
+            <input
+              id="bank-file"
+              class="visually-hidden"
+              type="file"
+              accept=".yaml,.yml,text/yaml,text/x-yaml"
+            />
+            <button id="load-sample" class="secondary-button" type="button">
+              Load Sample Bank
+            </button>
+          </div>
+
+          <div id="bank-status" class="status-card muted" aria-live="polite">
+            No question bank loaded yet.
+          </div>
+
+          <details class="schema-card">
+            <summary>Question Bank Schema</summary>
+            <p class="schema-note">
+              `correct_choice` uses a zero-based index, so `1` means the second
+              answer in the list.
+            </p>
+            <pre id="schema-preview" class="schema-preview"></pre>
+          </details>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Step 2</p>
+              <h2>Choose Study Tags</h2>
+            </div>
+          </div>
+
+          <div class="tag-toolbar">
+            <button id="select-all-tags" class="secondary-button" type="button">
+              Select All
+            </button>
+            <button id="clear-tags" class="secondary-button" type="button">
+              Clear
+            </button>
+          </div>
+
+          <div id="tag-list" class="tag-list empty">
+            Load a question bank to choose tags.
+          </div>
+
+          <div class="selection-card">
+            <div>
+              <p class="selection-label">Selected questions</p>
+              <p id="selected-count" class="selection-count">0</p>
+            </div>
+            <button id="start-session" class="primary-button" type="button">
+              Start Quiz Session
+            </button>
+          </div>
+        </section>
+
+        <section id="quiz-panel" class="panel panel-wide">
+          <div class="panel-header quiz-header">
+            <div>
+              <p class="eyebrow">Step 3</p>
+              <h2 id="quiz-title">Study Session</h2>
+            </div>
+            <div id="session-chip" class="session-chip">Idle</div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <p class="stat-label">Mastered</p>
+              <p id="stat-mastered" class="stat-value">0</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">Pending Review</p>
+              <p id="stat-review" class="stat-value">0</p>
+            </article>
+            <article class="stat-card">
+              <p class="stat-label">Attempts</p>
+              <p id="stat-attempts" class="stat-value">0</p>
+            </article>
+          </div>
+
+          <div class="progress-track" aria-hidden="true">
+            <div id="progress-fill" class="progress-fill"></div>
+          </div>
+
+          <div id="quiz-empty" class="empty-state">
+            Load a bank, choose one or more tags, and start a session when
+            you are ready.
+          </div>
+
+          <div id="quiz-workspace" class="quiz-workspace hidden">
+            <article class="question-card">
+              <div class="question-topline">
+                <span id="question-badge" class="question-badge">
+                  Fresh question
+                </span>
+                <span id="question-order" class="question-order"></span>
+              </div>
+
+              <div id="question-tags" class="question-tags"></div>
+
+              <h3 id="question-prompt" class="question-prompt"></h3>
+
+              <p id="question-citation" class="question-citation"></p>
+
+              <div id="choice-list" class="choice-list"></div>
+            </article>
+
+            <section
+              id="feedback-card"
+              class="feedback-card hidden"
+              aria-live="polite"
+            >
+              <h3 id="feedback-title"></h3>
+              <p id="feedback-answer"></p>
+              <p id="feedback-explanation"></p>
+              <p id="feedback-review"></p>
+              <button id="next-question" class="primary-button" type="button">
+                Continue
+              </button>
+            </section>
+          </div>
+
+          <div id="completion-card" class="completion-card hidden">
+            <p class="eyebrow">Session complete</p>
+            <h3 id="completion-title">Everything in this set is mastered.</h3>
+            <div class="completion-stats">
+              <div>
+                <p class="completion-label">Questions studied</p>
+                <p id="completion-mastered" class="completion-value">0</p>
+              </div>
+              <div>
+                <p class="completion-label">Needed review</p>
+                <p id="completion-review-needed" class="completion-value">0</p>
+              </div>
+              <div>
+                <p class="completion-label">Total attempts</p>
+                <p id="completion-attempts" class="completion-value">0</p>
+              </div>
+            </div>
+            <button id="restart-session" class="primary-button" type="button">
+              Run Another Session
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script defer id="MathJax-script" src="vendor/mathjax/tex-chtml.js"></script>
+    <script defer src="src/app.js"></script>
+  </body>
+</html>

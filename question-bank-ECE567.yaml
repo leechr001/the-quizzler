@@ -1,0 +1,1600 @@
+questions:
+  - id: ch1-dp-complexity
+    prompt: 'In the most rewarding path example, how does dynamic programming scale with the number of stages \(T\) compared with exclusive search?'
+    choices:
+      - 'Dynamic programming is linear in \(T\), while exclusive search is exponential in \(T\)'
+      - 'Dynamic programming and exclusive search are both exponential in \(T\)'
+      - 'Dynamic programming is quadratic in \(T\), while exclusive search is linear in \(T\)'
+      - 'Dynamic programming is exponential in \(T\), while exclusive search is linear in \(T\)'
+    correct_choice: 0
+    explanation: 'Exclusive search enumerates all feasible paths, so its cost grows exponentially with the horizon. Dynamic programming reuses optimal subproblem values, so the chapter emphasizes linear growth in \(T\).'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 5
+    tags:
+      - ch1
+      - dp
+
+  - id: ch1-principle-of-optimality
+    prompt: 'What does the principle of optimality say in dynamic programming?'
+    choices:
+      - 'A subsolution of an optimal solution is optimal for its corresponding subproblem'
+      - 'A greedy action is always globally optimal after one step'
+      - 'The value function can be computed without any future information'
+      - 'Optimal policies do not depend on the current state'
+    correct_choice: 0
+    explanation: 'The principle of optimality is the reason backward search works: once an optimal path reaches a subproblem, the remaining path must itself be optimal for that subproblem.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 5
+    tags:
+      - ch1
+      - bellman
+
+  - id: ch1-bellman-next-value
+    prompt: 'In the Bellman equation \(V_k(j) = \max_{i \in N_k(j)} (r_k(j,i) + V_{k+1}(i))\), what does \(V_{k+1}(i)\) represent?'
+    choices:
+      - 'The maximum cumulative reward from next-stage node \(i\) to the destination'
+      - 'The immediate reward for moving from \(j\) to \(i\)'
+      - 'The probability of selecting action \(i\)'
+      - 'The number of outgoing edges from node \(i\)'
+    correct_choice: 0
+    explanation: 'The Bellman equation combines an immediate reward with the best achievable future reward. Here \(V_{k+1}(i)\) is exactly that optimal future value starting from node \(i\).'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 5
+    tags:
+      - ch1
+      - bellman
+
+  - id: ch1-backward-forward-method
+    prompt: 'In the backward-forward method for deterministic DP, what do the two passes do?'
+    choices:
+      - 'Backward search computes the values, and forward search recovers the optimal actions'
+      - 'Backward search samples trajectories, and forward search estimates rewards'
+      - 'Backward search chooses actions, and forward search estimates transition kernels'
+      - 'Both passes compute the same values from different initializations'
+    correct_choice: 0
+    explanation: 'The backward pass solves the Bellman equations for the value functions. Once those values are known, the forward pass selects the maximizing action at each stage.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 7
+    tags:
+      - ch1
+      - deterministic-dp
+
+  - id: ch1-rod-cutting-state
+    prompt: 'In the rod-cutting formulation, what does state \(x_k\) mean?'
+    choices:
+      - 'The remaining rod length after the \(k\)th cut'
+      - 'The total profit collected after the \(k\)th cut'
+      - 'The number of cuts that remain'
+      - 'The original length of the rod'
+    correct_choice: 0
+    explanation: 'The state is chosen so that future decisions only depend on how much rod is left. That makes the transition simple: the next state is current length minus the cut length.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 9
+    tags:
+      - ch1
+      - rod-cutting
+
+  - id: ch1-knapsack-feasibility
+    prompt: 'In the 0-1 knapsack DP, what happens when item \(k\) has weight \(w_k > x_k\), where \(x_k\) is the remaining capacity?'
+    choices:
+      - 'The only feasible action is to exclude the item'
+      - 'The item must still be included, but with zero reward'
+      - 'The state becomes terminal immediately'
+      - 'The remaining capacity is reset to zero'
+    correct_choice: 0
+    explanation: 'If the item is heavier than the remaining capacity, action \(u_k = 1\) is infeasible. The book encodes this by restricting the feasible action set to \(\{0\}\).'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 12
+    tags:
+      - ch1
+      - knapsack
+
+  - id: ch1-shortest-path-loop
+    prompt: 'Why does the shortest-path example argue that a horizon of \(mn-1\) steps is sufficient?'
+    choices:
+      - 'Any path with a loop is suboptimal because rewards are nonpositive, so removing the loop improves the reward'
+      - 'The agent is allowed to move only right and up'
+      - 'The destination must always be reached in exactly \(mn-1\) moves'
+      - 'The stay action forces all paths to have equal length'
+    correct_choice: 0
+    explanation: 'Because every square gives a nonpositive reward, revisiting squares through a loop only hurts performance. That lets the chapter bound the useful horizon by the number of grid cells.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 12
+    tags:
+      - ch1
+      - shortest-path
+
+  - id: ch1-stochastic-policy-need
+    prompt: 'Why is a fixed action sequence not enough in stochastic dynamic programming?'
+    choices:
+      - 'Because the state reached at each stage is random, so the action should depend on the current state'
+      - 'Because the reward function is always unknown'
+      - 'Because discounting is required in every stochastic problem'
+      - 'Because a Bellman equation cannot be written for action sequences'
+    correct_choice: 0
+    explanation: 'In deterministic DP, a fixed optimal sequence can work because the state trajectory is known in advance. In stochastic DP, the agent needs a policy that maps the realized state to an action.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 15
+    tags:
+      - ch1
+      - stochastic-dp
+
+  - id: ch1-stochastic-bellman-expectation
+    prompt: 'What is the key Bellman-equation change when moving from deterministic DP to stochastic DP?'
+    choices:
+      - 'The future term becomes an expectation over rewards and next states'
+      - 'The maximization over actions disappears'
+      - 'The value function no longer depends on stage'
+      - 'The reward must be discounted even in finite horizon'
+    correct_choice: 0
+    explanation: 'In stochastic DP, the next reward and next state are random. The Bellman equation therefore uses expected immediate reward plus expected next-state value.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 15
+    tags:
+      - ch1
+      - stochastic-dp
+
+  - id: ch1-infinite-horizon-time-homogeneous
+    prompt: 'In infinite-horizon discounted DP with a time-homogeneous system, why can the value function be written without a stage index?'
+    choices:
+      - 'Because the transition rule, reward function, and stationary policy do not depend on time, so the remaining problem looks the same at every step'
+      - 'Because the discount factor makes all future rewards zero after one step'
+      - 'Because only deterministic policies are allowed'
+      - 'Because backward search starts from infinity'
+    correct_choice: 0
+    explanation: 'For time-homogeneous systems, starting one step later gives the same infinite-horizon problem. That is why the chapter writes a single stationary Bellman equation \(V(x)\) instead of \(V_k(x)\).'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 24
+    tags:
+      - ch1
+      - infinite-horizon
+
+  - id: ch2-markov-property
+    prompt: 'What does the Markov property mean for a discrete-time Markov chain?'
+    choices:
+      - 'Conditioned on the current state, the next state does not depend on older history'
+      - 'The next state is deterministic once the initial state is known'
+      - 'The state distribution is always stationary'
+      - 'The transition matrix must be symmetric'
+    correct_choice: 0
+    explanation: 'The chapter defines a Markov chain by the fact that the most recent state contains all the information needed to predict the next state. Older history becomes irrelevant once the current state is known.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 26
+    tags:
+      - ch2
+      - markov-chains
+
+  - id: ch2-transition-matrix-entry
+    prompt: 'For a time-homogeneous Markov chain, what does the matrix entry \(P_{ij}\) denote?'
+    choices:
+      - 'The probability of moving from state \(i\) to state \(j\) in one step'
+      - 'The long-run fraction of time spent in state \(j\)'
+      - 'The reward collected when leaving state \(i\)'
+      - 'The probability that state \(j\) is absorbing'
+    correct_choice: 0
+    explanation: 'The transition probability matrix collects one-step transition probabilities. Its \(i,j\) entry is the probability of being in \(j\) next given that the chain is currently in \(i\).'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 27
+    tags:
+      - ch2
+      - markov-chains
+
+  - id: ch2-distribution-evolution
+    prompt: 'How does the chapter write the distribution \(p_k\) of a time-homogeneous Markov chain at time \(k\)?'
+    choices:
+      - '\(p_k = (P^\top)^k p_0\)'
+      - '\(p_k = P^k p_0\)'
+      - '\(p_k = P^{-k} p_0\)'
+      - '\(p_k = P p_0\) for every \(k\)'
+    correct_choice: 0
+    explanation: 'The chapter defines \(p_k\) as a column vector of state probabilities and uses the transpose convention, so the evolution is \(p_{k+1} = P^\top p_k\), hence \(p_k = (P^\top)^k p_0\).'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 27
+    tags:
+      - ch2
+      - markov-chains
+
+  - id: ch2-pagerank-stationary
+    prompt: 'In the PageRank discussion, what does the stationary distribution \(\pi\) represent?'
+    choices:
+      - 'The fraction of time the random surfer spends on each webpage'
+      - 'The probability of clicking the most recent hyperlink'
+      - 'The reward of each webpage'
+      - 'The shortest path to a webpage'
+    correct_choice: 0
+    explanation: 'PageRank interprets importance through long-run visitation frequency. A page with larger stationary probability is visited more often by the random surfer and is therefore ranked higher.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 27
+    tags:
+      - ch2
+      - pagerank
+
+  - id: ch2-controlled-markov-chain
+    prompt: 'What turns an ordinary Markov chain into a controlled Markov chain in the chapter?'
+    choices:
+      - 'The transition probabilities depend on the chosen action'
+      - 'The state space becomes continuous'
+      - 'Rewards are added to every transition'
+      - 'The stationary distribution becomes unique'
+    correct_choice: 0
+    explanation: 'A controlled Markov chain lets the agent influence transition probabilities through actions. That is the bridge from plain Markov chains to Markov decision processes.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 28
+    tags:
+      - ch2
+      - mdp
+
+  - id: ch2-markov-stationary-policy
+    prompt: 'Why does the chapter focus on Markov policies, and then stationary policies, for discounted MDPs?'
+    choices:
+      - 'Because one Markov policy can be optimal, and time-homogeneous problems let us further focus on stationary policies'
+      - 'Because non-Markov policies are always infeasible'
+      - 'Because stationary policies are the only ones with finite value'
+      - 'Because random policies cannot be analyzed'
+    correct_choice: 0
+    explanation: 'The chapter states that for finding one optimal policy it is enough to search over Markov policies. Under time-homogeneous settings, this can be reduced further to stationary policies.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 29
+    tags:
+      - ch2
+      - policies
+
+  - id: ch2-value-iteration-model
+    prompt: 'What information is assumed known in the value-iteration algorithm for MDPs?'
+    choices:
+      - 'The transition probabilities and mean rewards for every state-action pair'
+      - 'Only the optimal policy'
+      - 'Only sample trajectories generated by the environment'
+      - 'The stationary distribution of every policy'
+    correct_choice: 0
+    explanation: 'The value-iteration section is model-based. It assumes the model is known, meaning both the transition kernel and the mean reward function are available.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 29
+    tags:
+      - ch2
+      - value-iteration
+
+  - id: ch2-value-iteration-stop
+    prompt: 'According to the chapter, when should practical value iteration stop?'
+    choices:
+      - 'When \(\max_x |V_k(x) - V_{k-1}(x)| < \epsilon\)'
+      - 'When the policy stops changing for one state'
+      - 'After exactly \(|X|\) iterations'
+      - 'When the initial value function becomes zero'
+    correct_choice: 0
+    explanation: 'The stopping rule measures how much the value function changes from one iteration to the next. Small sup-norm change indicates the iteration is close to convergence.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 30
+    tags:
+      - ch2
+      - value-iteration
+
+  - id: ch2-policy-iteration-distinction
+    prompt: 'What is the key idea that distinguishes policy iteration from value iteration?'
+    choices:
+      - 'Policy iteration keeps an explicit policy at each iteration and alternates policy evaluation with policy improvement'
+      - 'Policy iteration updates only one state at a time'
+      - 'Policy iteration avoids solving Bellman equations'
+      - 'Policy iteration works only for deterministic systems'
+    correct_choice: 0
+    explanation: 'Value iteration iterates directly on values, but policy iteration maintains a concrete policy and improves it step by step. The evaluation step computes the value of the current policy before improving it.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 34
+    tags:
+      - ch2
+      - policy-iteration
+
+  - id: ch2-model-based-challenges
+    prompt: 'Which pair of issues does the chapter identify as the main practical challenges for model-based algorithms?'
+    choices:
+      - 'Knowing the model is difficult, and tabular methods do not scale to very large or continuous spaces'
+      - 'Rewards are always negative, and policies cannot be stationary'
+      - 'Discount factors are unknown, and Bellman equations have no solutions'
+      - 'Action spaces are finite, and transition matrices are singular'
+    correct_choice: 0
+    explanation: 'The chapter highlights two bottlenecks: model-based methods need transition and reward information, and tabular value storage does not scale well to large or continuous problems.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 37
+    tags:
+      - ch2
+      - model-based
+
+  - id: ch3-q-function-meaning
+    prompt: 'What does the Q-function \(Q(x,u)\) represent in Chapter 3?'
+    choices:
+      - 'The discounted cumulative reward of taking action \(u\) in state \(x\) and then following the optimal policy'
+      - 'The immediate reward of action \(u\) in state \(x\) only'
+      - 'The probability that action \(u\) is optimal in state \(x\)'
+      - 'The value of state \(x\) under a random policy'
+    correct_choice: 0
+    explanation: 'The chapter defines Q as an action value: the first action is fixed to \(u\), and after that the agent follows the optimal policy. That is why Q depends on both state and action.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 38
+    tags:
+      - ch3
+      - q-learning
+
+  - id: ch3-value-from-q
+    prompt: 'How is the optimal value function related to the Q-function?'
+    choices:
+      - '\(V(x) = \max_u Q(x,u)\)'
+      - '\(V(x) = \sum_u Q(x,u)\)'
+      - '\(V(x) = \min_u Q(x,u)\)'
+      - '\(V(x) = Q(x,\mu(x)) - r(x,\mu(x))\)'
+    correct_choice: 0
+    explanation: 'The best state value is obtained by choosing the action with the largest action value. This identity is what makes Q-learning directly useful for control.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 38
+    tags:
+      - ch3
+      - q-learning
+
+  - id: ch3-why-learn-q
+    prompt: 'Why is learning the Q-function especially convenient when the model is unknown?'
+    choices:
+      - 'Because the agent can choose the best action by comparing Q-values directly, without needing transition probabilities or mean rewards'
+      - 'Because Q-learning automatically reveals the stationary distribution'
+      - 'Because Q-values do not depend on the action space'
+      - 'Because the value function becomes unnecessary in every RL problem'
+    correct_choice: 0
+    explanation: 'If Q is known, action selection is just an argmax over actions. By contrast, using only \(V(x)\) would still require model information to decide which action attains that value.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 39
+    tags:
+      - ch3
+      - q-learning
+
+  - id: ch3-q-learning-target
+    prompt: 'In Q-learning, why is the quantity \(r + \alpha \max_v \tilde Q(x'',v)\) used in the update?'
+    choices:
+      - 'It is a sample-based estimate of the Bellman target when the transition model is unknown'
+      - 'It forces the behavior policy to be on-policy'
+      - 'It removes the need for a learning rate'
+      - 'It guarantees that all Q-values are updated simultaneously'
+    correct_choice: 0
+    explanation: 'The Bellman equation uses an expectation over next states, but Q-learning does not know the transition kernel. It replaces that expectation with the target built from the sampled reward and sampled next state.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 39
+    tags:
+      - ch3
+      - bellman
+
+  - id: ch3-learning-rate-role
+    prompt: 'What does the learning rate \(\beta_k\) control in Q-learning?'
+    choices:
+      - 'How aggressively the new estimate replaces the old estimate'
+      - 'How many actions are available in each state'
+      - 'How much exploration is used by the behavior policy'
+      - 'How often the environment resets'
+    correct_choice: 0
+    explanation: 'Q-learning forms a weighted average between the old Q estimate and the new target. The learning rate determines how much weight the algorithm gives to the new information.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 39
+    tags:
+      - ch3
+      - q-learning
+
+  - id: ch3-temporal-difference
+    prompt: 'What is the temporal difference in the Q-learning update?'
+    choices:
+      - 'The new target estimate minus the old Q estimate'
+      - 'The difference between two consecutive rewards'
+      - 'The number of time steps until termination'
+      - 'The gap between the target policy and the behavior policy'
+    correct_choice: 0
+    explanation: 'The chapter defines the temporal difference as \(r + \alpha \max_v \tilde Q(x'',v) - \tilde Q(x,u)\). It measures how inconsistent the current estimate is with the Bellman-style target.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 40
+    tags:
+      - ch3
+      - temporal-difference
+
+  - id: ch3-one-pair-update
+    prompt: 'After one sampled experience, how many state-action entries does tabular Q-learning update?'
+    choices:
+      - 'Exactly one'
+      - 'All actions for the current state'
+      - 'All states that can transition to the next state'
+      - 'All state-action pairs in the table'
+    correct_choice: 0
+    explanation: 'The chapter explicitly notes that Q-learning updates only the Q-value for the sampled pair \((x,u)\). That is one reason tabular methods can learn incrementally from data.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 40
+    tags:
+      - ch3
+      - q-table
+
+  - id: ch3-q-learning-off-policy
+    prompt: 'Why is Q-learning classified as an off-policy algorithm?'
+    choices:
+      - 'Because the policy being learned can differ from the policy that generates the experiences'
+      - 'Because it never uses rewards collected from the environment'
+      - 'Because it requires a stationary distribution'
+      - 'Because it updates only one Q entry at a time'
+    correct_choice: 0
+    explanation: 'Q-learning can learn the optimal target policy from samples produced by some other behavior policy, as long as all state-action pairs are visited sufficiently often.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 41
+    tags:
+      - ch3
+      - off-policy
+
+  - id: ch3-sarsa-on-policy
+    prompt: 'What makes SARSA an on-policy algorithm?'
+    choices:
+      - 'Its update uses the next action actually chosen by the same \(\epsilon\)-greedy policy that generated the data'
+      - 'It always chooses the greedy action without exploration'
+      - 'It updates all Q-values for the current state'
+      - 'It requires the model to be known'
+    correct_choice: 0
+    explanation: 'SARSA uses \(Q(x_k,u_k)\) in the target, where \(u_k\) is drawn from the current \(\epsilon\)-greedy policy. That means the behavior policy and target policy are the same.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 42
+    tags:
+      - ch3
+      - sarsa
+
+  - id: ch3-sarsa-updated-pair
+    prompt: 'At iteration \(k\), which state-action pair does SARSA update?'
+    choices:
+      - 'The previous pair \((x_{k-1}, u_{k-1})\)'
+      - 'The current pair \((x_k, u_k)\)'
+      - 'Every pair visited in the episode so far'
+      - 'Only the greedy action at the current state'
+    correct_choice: 0
+    explanation: 'The SARSA update uses the new transition and next chosen action to revise the value of the immediately preceding state-action pair. The chapter contrasts this explicitly with Q-learning.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 42
+    tags:
+      - ch3
+      - sarsa
+
+  - id: ch4-tabular-scalability
+    prompt: 'Why do tabular RL methods struggle in large games such as Go, according to Chapter 4?'
+    choices:
+      - 'The number of states becomes too large to store and update explicitly'
+      - 'Rewards are always deterministic in large games'
+      - 'Tabular methods require continuous action spaces'
+      - 'Bellman equations stop applying in games'
+    correct_choice: 0
+    explanation: 'The chapter motivates function approximation by pointing to the curse of dimensionality. A huge state space makes a table of state or state-action values computationally impractical.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 44
+    tags:
+      - ch4
+      - function-approximation
+
+  - id: ch4-linear-fa-form
+    prompt: 'What is the linear function-approximation model for the Q-function introduced in the chapter?'
+    choices:
+      - '\(Q(x,u) \approx w^\top \phi(x,u)\)'
+      - '\(Q(x,u) \approx \phi(x,u)^\top \phi(x,u)\)'
+      - '\(Q(x,u) \approx w + u\)'
+      - '\(Q(x,u) \approx \max_m w_m\)'
+    correct_choice: 0
+    explanation: 'Linear function approximation represents each state-action pair by features \(\phi(x,u)\) and uses a shared weight vector \(w\). The approximation is the inner product between weights and features.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 44
+    tags:
+      - ch4
+      - linear-fa
+
+  - id: ch4-shared-weight-vector
+    prompt: 'Why does learning the weight vector \(w\) determine Q-values for all state-action pairs under linear function approximation?'
+    choices:
+      - 'Because the same weight vector is shared across all pairs, and each pair uses its own feature vector'
+      - 'Because every state-action pair has the same feature vector'
+      - 'Because the rewards are assumed identical in all states'
+      - 'Because the transition model is known exactly'
+    correct_choice: 0
+    explanation: 'The chapter emphasizes that \(w\) is common for all \((x,u)\). Once \(w\) is known, plugging different feature vectors into \(w^\top \phi(x,u)\) produces every Q estimate.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 44
+    tags:
+      - ch4
+      - linear-fa
+
+  - id: ch4-generalization-advantage
+    prompt: 'What generalization advantage does linear function approximation have over tabular Q-learning?'
+    choices:
+      - 'It can estimate Q-values for unseen state-action pairs using learned features and shared weights'
+      - 'It guarantees exact optimal Q-values after one update'
+      - 'It eliminates the need for exploration'
+      - 'It makes the Bellman equation unnecessary'
+    correct_choice: 0
+    explanation: 'Tabular Q-learning only updates visited entries. Linear approximation can still produce an estimate for an unseen pair because the same learned weights apply to all feature vectors.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 45
+    tags:
+      - ch4
+      - generalization
+
+  - id: ch4-linear-update-direction
+    prompt: 'In Q-learning with linear function approximation, what multiplies the temporal-difference term in the weight update?'
+    choices:
+      - 'The feature vector \(\phi(x,u)\)'
+      - 'The transition matrix \(P\)'
+      - 'The stationary distribution \(\pi\)'
+      - 'The gradient of the reward with respect to the action'
+    correct_choice: 0
+    explanation: 'The linear-function update has the form \(w \leftarrow w + \beta_k \delta(w)\phi(x,u)\). The feature vector determines which components of the shared parameter vector are nudged.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 46
+    tags:
+      - ch4
+      - linear-fa
+
+  - id: ch4-nonlinear-extra-quantity
+    prompt: 'Compared with tabular Q-learning, what extra quantity must be computed when using nonlinear function approximation?'
+    choices:
+      - 'The gradient \(\nabla_w Q(x,u;w)\)'
+      - 'The exact stationary distribution of the policy'
+      - 'The inverse of the transition matrix'
+      - 'The Hessian of the reward function'
+    correct_choice: 0
+    explanation: 'The nonlinear update still uses a temporal-difference target, but now the parameters are trained through gradient descent on the approximator. That requires the gradient of the Q-network output with respect to its weights.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 48
+    tags:
+      - ch4
+      - deep-q-learning
+
+  - id: ch4-dqn-supervised-label
+    prompt: 'In the supervised-learning view of DQN, what target label is associated with input \((x_k, u_k)\)?'
+    choices:
+      - '\(y_k = r_k + \alpha \max_v Q(x_{k+1}, v; w)\), treated as a constant during the update'
+      - '\(y_k = Q(x_k, u_k; w)\), so the network learns to copy its own output'
+      - '\(y_k = r_k\) only, ignoring the next state'
+      - '\(y_k = V(x_k)\), computed from the stationary distribution'
+    correct_choice: 0
+    explanation: 'The chapter frames DQN as supervised learning with a bootstrapped label. It also notes that in practice the target is detached so it is treated as a number rather than a function of \(w\).'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 49
+    tags:
+      - ch4
+      - dqn
+
+  - id: ch4-finite-action-architecture
+    prompt: 'For finite action spaces, which DQN architecture does the chapter say is usually used?'
+    choices:
+      - 'Input the state and output a \(|U|\)-dimensional vector of Q-values, one per action'
+      - 'Input the action only and output the state value'
+      - 'Input the state-action pair and output the full transition matrix'
+      - 'Input the next state and output the reward distribution'
+    correct_choice: 0
+    explanation: 'When the action space is finite, the standard architecture takes only the state as input and outputs all action values at once. The chapter contrasts this with state-action input networks for very large or continuous action spaces.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 50
+    tags:
+      - ch4
+      - dqn
+
+  - id: ch4-experience-replay-purpose
+    prompt: 'What problem is experience replay mainly introduced to address in deep Q-learning?'
+    choices:
+      - 'Successive RL samples are highly correlated, so replay helps decorrelate training data'
+      - 'Rewards are too large to fit in memory'
+      - 'Actions are continuous and need discretization'
+      - 'The policy network has no output for terminal states'
+    correct_choice: 0
+    explanation: 'Supervised learning methods work best with approximately i.i.d. data, but online RL experiences are strongly correlated. Replay buffers help by mixing older experiences into random mini-batches.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 49
+    tags:
+      - ch4
+      - replay-buffer
+
+  - id: ch4-target-network-purpose
+    prompt: 'Why is a target network used in DQN?'
+    choices:
+      - 'To make the target value less dependent on the current online parameters by updating it only periodically'
+      - 'To guarantee exact convergence of deep Q-learning'
+      - 'To remove the need for a replay buffer'
+      - 'To replace the reward function with a learned model'
+    correct_choice: 0
+    explanation: 'If the same network defines both the prediction and the target, the target moves during optimization. A target network slows that movement by holding a delayed copy of the weights.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 50
+    tags:
+      - ch4
+      - target-network
+
+  - id: ch5-overestimation-inequality
+    prompt: 'Which inequality is used in Chapter 5 to explain overestimation under max operations?'
+    choices:
+      - '\(\mathbb{E}[\max_i Y_i] \ge \max_i \mathbb{E}[Y_i]\)'
+      - '\(\mathbb{E}[\max_i Y_i] \le \max_i \mathbb{E}[Y_i]\)'
+      - '\(\mathbb{E}[\sum_i Y_i] = \max_i \mathbb{E}[Y_i]\)'
+      - '\(\mathbb{E}[Y_i^2] = (\mathbb{E}[Y_i])^2\)'
+    correct_choice: 0
+    explanation: 'Taking a maximum after adding noise tends to select positive fluctuations. That is the core reason the chapter gives for overestimation in max-based Q-learning targets.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 52
+    tags:
+      - ch5
+      - overestimation
+
+  - id: ch5-unbiased-but-overestimate
+    prompt: 'Why can Q-learning with function approximation overestimate even if each Q estimate is unbiased?'
+    choices:
+      - 'Because the max operator introduces positive bias when applied to noisy estimates'
+      - 'Because unbiased estimates always become negatively biased after an update'
+      - 'Because zero-mean noise implies zero variance'
+      - 'Because the learning rate is larger than one'
+    correct_choice: 0
+    explanation: 'The chapter writes \(\tilde Q = Q + Y\) with zero-mean error \(Y\). Even then, choosing the largest noisy estimate tends to favor upward noise realizations.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 53
+    tags:
+      - ch5
+      - overestimation
+
+  - id: ch5-positive-bias-example
+    prompt: 'In the equal-Q special case analyzed in Chapter 5, what does the example show about the expected estimation error \(E[Z(x,u)]\)?'
+    choices:
+      - 'It is strictly positive'
+      - 'It is exactly zero'
+      - 'It is always negative'
+      - 'Its sign cannot be determined even with independent noise'
+    correct_choice: 0
+    explanation: 'The worked example with independent \(\{\pm \epsilon\}\) noise shows \(E[Z(x,u)] > 0\). That calculation makes the overestimation effect explicit rather than just intuitive.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 53
+    tags:
+      - ch5
+      - overestimation
+
+  - id: ch5-double-estimator-idea
+    prompt: 'What is the key idea of the double estimator introduced before double Q-learning?'
+    choices:
+      - 'Use one sample set to choose the maximizer and another to evaluate it'
+      - 'Use the same noisy estimate twice and average the results'
+      - 'Replace the max operator with a mean over actions'
+      - 'Update only one state per episode'
+    correct_choice: 0
+    explanation: 'The chapter separates selecting the maximizing action from estimating its value. This breaks the tight coupling that causes max-based overestimation.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 54
+    tags:
+      - ch5
+      - double-q
+
+  - id: ch5-double-estimator-bias
+    prompt: 'How is the double estimator characterized relative to the true maximum expectation?'
+    choices:
+      - 'It is an underestimator'
+      - 'It is always an overestimator'
+      - 'It is unbiased for every sample size'
+      - 'It is identical to the single estimator'
+    correct_choice: 0
+    explanation: 'The chapter notes that the double estimator is interestingly conservative: if it does not pick the true maximizer, its expectation drops below the true maximum.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 54
+    tags:
+      - ch5
+      - double-q
+
+  - id: ch5-two-estimators-purpose
+    prompt: 'Why does double Q-learning maintain two Q estimators?'
+    choices:
+      - 'To separate action selection from action evaluation and reduce overestimation'
+      - 'To model both rewards and transitions explicitly'
+      - 'To eliminate the need for target networks'
+      - 'To make the policy deterministic'
+    correct_choice: 0
+    explanation: 'The two-estimator design is the algorithmic version of the double-estimator idea. One network helps decide which action looks best, while the other provides the value used for evaluation.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 54
+    tags:
+      - ch5
+      - double-q
+
+  - id: ch5-other-network-evaluates
+    prompt: 'When Estimator 1 is updated in double Q-learning, which estimator evaluates the selected next action?'
+    choices:
+      - 'Estimator 2'
+      - 'Estimator 1 itself'
+      - 'Both estimators are averaged before evaluation'
+      - 'Neither estimator; the true Q-value is assumed known'
+    correct_choice: 0
+    explanation: 'The update uses Estimator 1 to pick the maximizing next action but Estimator 2 to score that action. This is exactly the selection-evaluation split that reduces overestimation.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 54
+    tags:
+      - ch5
+      - double-q
+
+  - id: ch5-double-dqn-selection-evaluation
+    prompt: 'In Double DQN, which network selects the next action and which network evaluates it?'
+    choices:
+      - 'The online network selects the action, and the target network evaluates it'
+      - 'The target network selects the action, and the online network evaluates it'
+      - 'The online network does both'
+      - 'The target network does both'
+    correct_choice: 0
+    explanation: 'Double DQN mirrors double Q-learning inside DQN. The online network computes the argmax action, while the target network supplies the target value for that chosen action.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 55
+    tags:
+      - ch5
+      - double-dqn
+
+  - id: ch5-clipped-target
+    prompt: 'What target does clipped double Q-learning use for the next-state estimate?'
+    choices:
+      - 'The smaller of the two networks'' next-state max Q-values'
+      - 'The larger of the two networks'' next-state max Q-values'
+      - 'The average of the two networks'' current-state Q-values'
+      - 'The exact Bellman target computed from the model'
+    correct_choice: 0
+    explanation: 'Clipped double Q-learning keeps two estimators but deliberately chooses the smaller next-state estimate. This conservative target is designed to counter overestimation.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 56
+    tags:
+      - ch5
+      - clipped-double-q
+
+  - id: ch5-clipped-both-updated
+    prompt: 'In clipped double DQN training, what is true about the two online networks?'
+    choices:
+      - 'Both are updated toward the same clipped target value'
+      - 'Only one online network is updated in each iteration'
+      - 'One network learns rewards and the other learns transitions'
+      - 'Neither network uses replay-buffer samples'
+    correct_choice: 0
+    explanation: 'The PyTorch outline computes one clipped target from the two target networks, then compares both online networks against that same target in the loss.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 56
+    tags:
+      - ch5
+      - clipped-double-q
+
+  - id: ch6-why-policy-gradient
+    prompt: 'Why do policy gradient methods become attractive when action spaces are very large or continuous?'
+    choices:
+      - 'Because outputting all Q-values or maximizing over actions becomes difficult, while a policy can output an action directly'
+      - 'Because Bellman equations no longer hold'
+      - 'Because value functions cannot be defined'
+      - 'Because model-based methods always fail for finite actions'
+    correct_choice: 0
+    explanation: 'The chapter motivates policy gradients by noting that Q-based control becomes awkward when the action space is huge or continuous. Directly parameterizing the policy avoids a hard action maximization step.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 58
+    tags:
+      - ch6
+      - policy-gradient
+
+  - id: ch6-critic-role
+    prompt: 'In generalized policy iteration, what is the critic responsible for?'
+    choices:
+      - 'Policy evaluation, usually by estimating the value or Q-function of the current policy'
+      - 'Sampling actions from the policy distribution'
+      - 'Generating the transition kernel exactly'
+      - 'Replacing the actor whenever the policy changes'
+    correct_choice: 0
+    explanation: 'The chapter maps the critic to the policy-evaluation step of policy iteration. Its job is to assess how good the current policy is.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 59
+    tags:
+      - ch6
+      - actor-critic
+
+  - id: ch6-actor-role
+    prompt: 'In generalized policy iteration, what is the actor responsible for?'
+    choices:
+      - 'Policy improvement based on the value information produced by the critic'
+      - 'Estimating the stationary distribution'
+      - 'Computing exact Bellman backups for every state'
+      - 'Ensuring that exploration is always zero'
+    correct_choice: 0
+    explanation: 'The actor corresponds to the improvement step. It adjusts the policy parameters so the policy gets better according to the critic''s evaluation.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 59
+    tags:
+      - ch6
+      - actor-critic
+
+  - id: ch6-gaussian-policy
+    prompt: 'Which parameterized policy in Chapter 6 is intended for continuous action spaces?'
+    choices:
+      - 'Gaussian policy'
+      - 'Gibbs policy'
+      - 'Greedy policy'
+      - 'Double-Q policy'
+    correct_choice: 0
+    explanation: 'The chapter presents Gibbs policy for finite action spaces and Gaussian policy for continuous action spaces. The Gaussian policy outputs a density instead of discrete action probabilities.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 60
+    tags:
+      - ch6
+      - policies
+
+  - id: ch6-pg-theorem-significance
+    prompt: 'What key obstacle does the policy gradient theorem remove from the gradient calculation?'
+    choices:
+      - 'The need to compute \(\nabla_w Q_w(x,u)\) directly'
+      - 'The need to define a policy at all'
+      - 'The need to sample trajectories'
+      - 'The need to know the discount factor'
+    correct_choice: 0
+    explanation: 'The theorem rewrites the gradient in terms of \(Q_w(x,u)\) and \(\nabla_w \log \pi_w(u|x)\). That matters because \(Q_w\) can be estimated by policy evaluation, whereas \(\nabla_w Q_w\) is much harder to obtain.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 61
+    tags:
+      - ch6
+      - policy-gradient
+
+  - id: ch6-discounted-state-distribution
+    prompt: 'What is \(\rho_w(x)\) in the policy gradient theorem?'
+    choices:
+      - 'The discounted state distribution under policy \(w\)'
+      - 'The stationary action distribution'
+      - 'The gradient of the value function'
+      - 'The replay-buffer sampling distribution'
+    correct_choice: 0
+    explanation: 'The theorem averages gradient contributions over states according to a discounted visitation distribution. It weights states by how often the current policy visits them over time.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 61
+    tags:
+      - ch6
+      - policy-gradient
+
+  - id: ch6-gibbs-score
+    prompt: 'For a Gibbs policy, what form does the score function \(\nabla_w \log \pi_w(u|x)\) take?'
+    choices:
+      - '\(\phi(x,u) - \mathbb{E}_{u \sim \pi_w(x)}[\phi(x,u)]\)'
+      - '\(\phi(x,u) + \mathbb{E}_{u \sim \pi_w(x)}[\phi(x,u)]\)'
+      - '\(\nabla_w Q_w(x,u)\)'
+      - '\(Q_w(x,u) - V_w(x)\)'
+    correct_choice: 0
+    explanation: 'The chapter gives a closed-form score for Gibbs policies. It is the selected action''s feature vector minus the feature expectation under the current policy.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 62
+    tags:
+      - ch6
+      - gibbs-policy
+
+  - id: ch6-reinforce-q-estimate
+    prompt: 'How does REINFORCE estimate \(Q_w(x_k,u_k)\) from a sampled episode?'
+    choices:
+      - 'By using the discounted return from step \(k\) to the end of the episode'
+      - 'By solving the Bellman equation exactly for the full MDP'
+      - 'By averaging all rewards collected before step \(k\)'
+      - 'By taking the maximum Q-value over the replay buffer'
+    correct_choice: 0
+    explanation: 'REINFORCE uses Monte Carlo returns. For each visited state-action pair, it substitutes the full discounted reward-to-go from that point in the episode.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 63
+    tags:
+      - ch6
+      - reinforce
+
+  - id: ch6-reinforce-on-policy
+    prompt: 'Why is REINFORCE considered an on-policy policy-gradient algorithm in the chapter?'
+    choices:
+      - 'Because it estimates the gradient of a policy using episodes generated by that same policy and does not reuse data from older policies'
+      - 'Because it always removes exploration from the policy'
+      - 'Because it requires the optimal policy before learning starts'
+      - 'Because it updates both actor and critic with the same target network'
+    correct_choice: 0
+    explanation: 'The chapter notes that REINFORCE uses experiences generated under the current policy \(w^t\), and older-policy data are not reused. That is the defining on-policy pattern.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 63
+    tags:
+      - ch6
+      - reinforce
+
+  - id: ch6-baseline-variance-reduction
+    prompt: 'Why can subtracting a state-only baseline \(G_w(x)\) reduce variance without changing the policy gradient?'
+    choices:
+      - 'Because its expected contribution to the gradient is zero, while a correlated baseline can lower variance'
+      - 'Because it makes the gradient exactly deterministic'
+      - 'Because it turns every policy-gradient method into an off-policy method'
+      - 'Because it removes the need to estimate values'
+    correct_choice: 0
+    explanation: 'The chapter proves that any baseline depending only on state has zero expected contribution when multiplied by the score function. Choosing a useful baseline, such as \(V_w(x)\), can therefore reduce variance without biasing the gradient.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 64
+    tags:
+      - ch6
+      - variance-reduction
+
+  - id: ch7-euclidean-proximal-issue
+    prompt: 'What is the main limitation of using Euclidean distance in the proximal term of vanilla policy gradient?'
+    choices:
+      - 'A small change in weights can still produce a large change in the policy'
+      - 'Euclidean distance is undefined for neural-network weights'
+      - 'Euclidean distance prevents any learning-rate choice'
+      - 'Euclidean distance makes the objective non-differentiable'
+    correct_choice: 0
+    explanation: 'Chapter 7 points out that closeness in parameter space does not necessarily mean closeness in policy space. That motivates proximal terms defined directly on policies rather than on weights.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 68
+    tags:
+      - ch7
+      - npg
+
+  - id: ch7-natural-gradient-metric
+    prompt: 'What replaces the identity matrix in natural policy gradient (NPG)?'
+    choices:
+      - 'The average Fisher information matrix'
+      - 'The transition matrix of the MDP'
+      - 'The Hessian of the reward function'
+      - 'The replay-buffer covariance matrix'
+    correct_choice: 0
+    explanation: 'NPG uses a metric derived from policy geometry rather than plain Euclidean geometry. In the chapter, this metric is the average Fisher information matrix.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 69
+    tags:
+      - ch7
+      - npg
+
+  - id: ch7-fisher-from-kl
+    prompt: 'Why does the Fisher information matrix appear in NPG?'
+    choices:
+      - 'It is the second-order term in the local Taylor approximation of the KL divergence between nearby policies'
+      - 'It exactly equals the Bellman operator for policy gradients'
+      - 'It is the covariance of rewards over episodes'
+      - 'It counts how many times each state is visited'
+    correct_choice: 0
+    explanation: 'The chapter expands the KL divergence between \(\pi_{\tilde w}\) and \(\pi_w\) around the current policy. The resulting quadratic term is the Fisher information matrix.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 69
+    tags:
+      - ch7
+      - npg
+
+  - id: ch7-performance-difference-advantage
+    prompt: 'In the performance difference lemma, which old-policy quantity measures how much better an action is than the state value?'
+    choices:
+      - 'The advantage function \(A_w(x,u) = Q_w(x,u) - V_w(x)\)'
+      - 'The Fisher information matrix'
+      - 'The replay-buffer return'
+      - 'The stationary distribution \(p_k\)'
+    correct_choice: 0
+    explanation: 'The performance difference lemma rewrites policy improvement in terms of advantage. Advantage is the gap between the value of a specific action and the value of the state under the old policy.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 71
+    tags:
+      - ch7
+      - trpo
+
+  - id: ch7-trpo-approximation
+    prompt: 'What local approximation does TRPO use to obtain a tractable policy-improvement objective?'
+    choices:
+      - 'It replaces the new policy''s discounted state distribution \(\rho_{\tilde w}\) with the current policy''s distribution \(\rho_w\)'
+      - 'It replaces \(Q_w(x,u)\) with immediate reward only'
+      - 'It removes the advantage function from the objective'
+      - 'It assumes the action space is discrete and finite'
+    correct_choice: 0
+    explanation: 'TRPO builds a local surrogate objective \(L_{\tilde w}(x_0)\) using the old policy''s state distribution. This approximation is justified when the new policy remains close to the current one.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 71
+    tags:
+      - ch7
+      - trpo
+
+  - id: ch7-trpo-constraint
+    prompt: 'What constraint is central to the TRPO optimization problem?'
+    choices:
+      - 'The expected KL divergence between the new and current policies must stay below \(\epsilon\)'
+      - 'The Euclidean norm of the weights must be exactly one'
+      - 'The value function must increase by at least \(\epsilon\) each step'
+      - 'The replay buffer must contain at least \(\epsilon^{-1}\) samples'
+    correct_choice: 0
+    explanation: 'TRPO keeps policy updates inside a trust region by constraining the expected KL divergence. This guards the local approximation used by the algorithm.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 71
+    tags:
+      - ch7
+      - trpo
+
+  - id: ch7-trpo-monotonic-improvement
+    prompt: 'What does the monotonic improvement theorem for TRPO guarantee?'
+    choices:
+      - 'With carefully chosen learning rates, the next policy value is no smaller than the current one'
+      - 'TRPO converges to the globally optimal policy in finitely many steps'
+      - 'TRPO and PPO produce the same update'
+      - 'The Fisher information matrix is always diagonal'
+    correct_choice: 0
+    explanation: 'The theorem stated in the chapter guarantees policy improvement, not global optimality. It says the value under the updated policy is at least as large as before.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 72
+    tags:
+      - ch7
+      - trpo
+
+  - id: ch7-ppo-penalty
+    prompt: 'How does PPO-penalty modify the TRPO-style optimization?'
+    choices:
+      - 'It replaces the hard KL constraint with a KL penalty term and adapts the penalty coefficient \(\beta\)'
+      - 'It removes the advantage function from the objective'
+      - 'It requires an exact inverse Fisher matrix'
+      - 'It uses deterministic policies only'
+    correct_choice: 0
+    explanation: 'PPO-penalty solves an unconstrained optimization problem with a KL penalty. The chapter then adjusts \(\beta\) depending on whether the realized KL is too small or too large.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 72
+    tags:
+      - ch7
+      - ppo
+
+  - id: ch7-ppo-clip-purpose
+    prompt: 'What is the purpose of clipping in PPO-clip?'
+    choices:
+      - 'To keep the new policy from moving too far from the old one and to make the objective conservative'
+      - 'To force the policy to become deterministic'
+      - 'To eliminate the need for mini-batch SGD'
+      - 'To make the advantage function nonnegative'
+    correct_choice: 0
+    explanation: 'The chapter explains that clipping limits excessive changes in the policy ratio. Using the minimum with the clipped term discourages updates that would improve the surrogate only by moving too far.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 73
+    tags:
+      - ch7
+      - ppo
+
+  - id: ch7-dpg-gradient-form
+    prompt: 'According to the deterministic policy gradient theorem, what quantity drives the actor update?'
+    choices:
+      - 'The action-gradient of the critic, evaluated at \(u=\mu_\theta(x)\), multiplied by the Jacobian of \(\mu_\theta(x)\)'
+      - 'The score function \(\nabla_\theta \log \pi_\theta(u|x)\) of a stochastic policy'
+      - 'The transition matrix inverse'
+      - 'The KL divergence between two replay buffers'
+    correct_choice: 0
+    explanation: 'DPG replaces stochastic-policy score terms with a chain rule through the deterministic actor. The actor follows how the critic value changes with the chosen action.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 73
+    tags:
+      - ch7
+      - dpg
+
+  - id: ch8-exploration-vs-exploitation
+    prompt: 'In the bandit chapter, what is the exploration versus exploitation tradeoff?'
+    choices:
+      - 'Exploration tries actions to learn which are good, while exploitation chooses the action currently believed to be best'
+      - 'Exploration maximizes reward, while exploitation minimizes variance'
+      - 'Exploration is only for deterministic rewards, while exploitation is only for random rewards'
+      - 'Exploration and exploitation are identical once regret is defined'
+    correct_choice: 0
+    explanation: 'The chapter frames exploration as information gathering and exploitation as reward gathering. Too little exploration can miss the best arm, but too much exploration wastes rewards.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 76
+    tags:
+      - ch8
+      - bandits
+
+  - id: ch8-bandit-reward-model
+    prompt: 'What reward model is assumed for each arm in the stochastic multi-armed bandit setup?'
+    choices:
+      - 'Each arm produces i.i.d. Bernoulli rewards with mean \(\mu_i\)'
+      - 'Each arm has deterministic rewards that increase over time'
+      - 'Each arm follows a Markov chain with continuous rewards'
+      - 'Each arm has Gaussian rewards with unknown variance only'
+    correct_choice: 0
+    explanation: 'The chapter specifies Bernoulli rewards for clarity. The mean \(\mu_i\) is the quantity the algorithm is trying to learn about each arm.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 76
+    tags:
+      - ch8
+      - bandits
+
+  - id: ch8-epsilon-greedy-rule
+    prompt: 'What does the \(\epsilon\)-greedy algorithm do at each time step?'
+    choices:
+      - 'With probability \(1-\epsilon\), it picks the arm with the largest empirical mean; with probability \(\epsilon\), it picks an arm uniformly at random'
+      - 'It always picks the arm with the largest UCB bonus'
+      - 'It always cycles through the arms in order'
+      - 'It samples every arm according to the stationary distribution'
+    correct_choice: 0
+    explanation: 'The policy mostly exploits the best empirical arm but forces occasional random exploration. This is a simple exploration strategy but not a particularly regret-efficient one.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 77
+    tags:
+      - ch8
+      - epsilon-greedy
+
+  - id: ch8-empirical-mean
+    prompt: 'What is \(\mu_i(k)\) in the \(\epsilon\)-greedy description?'
+    choices:
+      - 'The empirical mean reward of arm \(i\) up to time \(k\)'
+      - 'The true mean reward of arm \(i\), known in advance'
+      - 'The confidence interval width for arm \(i\)'
+      - 'The total number of times arm \(i\) has been pulled'
+    correct_choice: 0
+    explanation: 'The algorithm computes a sample average for each arm from the rewards observed so far. That empirical mean is the exploitation statistic in \(\epsilon\)-greedy.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 77
+    tags:
+      - ch8
+      - epsilon-greedy
+
+  - id: ch8-ucb-initialization
+    prompt: 'What does the UCB algorithm do before applying its main selection rule?'
+    choices:
+      - 'It plays each arm once'
+      - 'It initializes all arm means to one'
+      - 'It discards half of the arms at random'
+      - 'It runs policy iteration for one pass'
+    correct_choice: 0
+    explanation: 'UCB needs at least one sample per arm so the confidence bonus is well-defined. The chapter therefore starts by pulling every arm once.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 77
+    tags:
+      - ch8
+      - ucb
+
+  - id: ch8-ucb-bonus-meaning
+    prompt: 'How should the UCB bonus term be interpreted?'
+    choices:
+      - 'As a confidence interval term that is larger when the arm has been sampled less'
+      - 'As a penalty for highly rewarding arms'
+      - 'As the stationary probability of an arm'
+      - 'As the regret accumulated by an arm'
+    correct_choice: 0
+    explanation: 'The UCB bonus quantifies uncertainty in the arm''s mean estimate. Fewer samples mean more uncertainty, so the bonus is larger and the arm is explored more.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 77
+    tags:
+      - ch8
+      - ucb
+
+  - id: ch8-optimism-uncertainty
+    prompt: 'What does the phrase optimism in face of uncertainty mean in the UCB discussion?'
+    choices:
+      - 'Prefer arms whose uncertain upside makes their upper confidence bound large'
+      - 'Assume every arm has the same mean reward forever'
+      - 'Ignore empirical means until the final round'
+      - 'Always pick the least-sampled arm regardless of reward estimates'
+    correct_choice: 0
+    explanation: 'UCB treats uncertain arms optimistically by adding a bonus to their empirical mean. If an arm has been explored less, its plausible upside is larger, so it gets sampled more.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 78
+    tags:
+      - ch8
+      - ucb
+
+  - id: ch8-regret-definition
+    prompt: 'What does regret measure in the multi-armed bandit chapter?'
+    choices:
+      - 'The gap between always playing the best arm and the reward obtained by the algorithm'
+      - 'The number of times the algorithm explores'
+      - 'The variance of the best arm'
+      - 'The difference between two confidence intervals'
+    correct_choice: 0
+    explanation: 'Regret compares the algorithm against the ideal benchmark that always pulls the best arm. It is the standard measure of exploration cost in the chapter.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 78
+    tags:
+      - ch8
+      - regret
+
+  - id: ch8-epsilon-greedy-regret
+    prompt: 'What regret growth does the chapter attribute to \(\epsilon\)-greedy?'
+    choices:
+      - 'Linear regret \(O(K)\)'
+      - 'Logarithmic regret \(O(\log K)\)'
+      - 'Square-root regret \(O(\sqrt{\log K})\)'
+      - 'Constant regret \(O(1)\)'
+    correct_choice: 0
+    explanation: 'Because \(\epsilon\)-greedy keeps exploring with fixed probability, it keeps taking suboptimal actions at a constant rate. The chapter therefore concludes its regret grows linearly with \(K\).'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 78
+    tags:
+      - ch8
+      - regret
+
+  - id: ch8-ucb-regret
+    prompt: 'What regret bound does the chapter derive for UCB?'
+    choices:
+      - '\(O(\sqrt{K \log K})\)'
+      - '\(O(K)\)'
+      - '\(O(K^2)\)'
+      - '\(O(1)\)'
+    correct_choice: 0
+    explanation: 'The chapter contrasts UCB with \(\epsilon\)-greedy by proving a much smaller regret rate. The square-root dependence on \(K\) is the main qualitative improvement.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 78
+    tags:
+      - ch8
+      - regret
+
+  - id: ch9-alphazero-components
+    prompt: 'What are the two main components of AlphaZero in Chapter 9?'
+    choices:
+      - 'A policy network and Monte Carlo Tree Search (MCTS)'
+      - 'A replay buffer and a target network'
+      - 'Value iteration and policy iteration'
+      - 'A transition model and a reward model'
+    correct_choice: 0
+    explanation: 'The chapter presents AlphaZero as a combination of a learned policy-value network and a search procedure. These two parts interact through self-play.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 82
+    tags:
+      - ch9
+      - alphazero
+
+  - id: ch9-actor-critic-analogy
+    prompt: 'How does the chapter relate AlphaZero to actor-critic ideas?'
+    choices:
+      - 'The policy network learns from MCTS self-play samples, while MCTS improves the policy and generates new samples'
+      - 'The policy network acts only as a replay buffer, while MCTS is the critic'
+      - 'MCTS evaluates fixed policies, while the policy network computes exact Bellman backups'
+      - 'AlphaZero is unrelated to actor-critic and uses only tabular dynamic programming'
+    correct_choice: 0
+    explanation: 'The chapter draws an analogy rather than claiming AlphaZero is a standard actor-critic method. The network absorbs improvements from search, and search keeps producing stronger targets for the network.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 82
+    tags:
+      - ch9
+      - alphazero
+
+  - id: ch9-policy-network-outputs
+    prompt: 'What are the two outputs of the AlphaZero policy network?'
+    choices:
+      - 'A value estimate \(v_\theta(s)\) and a policy vector \(p_\theta(s)\)'
+      - 'A transition matrix and a reward model'
+      - 'A Q-table and a replay buffer'
+      - 'A Fisher matrix and a KL penalty'
+    correct_choice: 0
+    explanation: 'The network takes a board position as input and outputs both how good the position looks and a probability distribution over actions. This lets one network support both evaluation and search guidance.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 83
+    tags:
+      - ch9
+      - policy-network
+
+  - id: ch9-self-play-sample
+    prompt: 'What does a training sample \((s_{h,k}, \pi_{h,k}, z_k)\) represent in AlphaZero?'
+    choices:
+      - 'A state, the improved action distribution from MCTS at that state, and the final game outcome'
+      - 'A state, the exact optimal policy, and the transition kernel'
+      - 'A state-action pair, the immediate reward, and the replay-buffer index'
+      - 'A policy parameter vector, its gradient, and a KL constraint'
+    correct_choice: 0
+    explanation: 'The chapter builds supervised-learning targets from self-play. The policy target comes from search at that position, and the value target comes from the game''s eventual outcome.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 83
+    tags:
+      - ch9
+      - self-play
+
+  - id: ch9-policy-loss-terms
+    prompt: 'What does the AlphaZero training loss combine?'
+    choices:
+      - 'Value prediction error, a policy-learning term that matches \(p_\theta\) to \(\pi\), and regularization'
+      - 'Only a Bellman residual on Q-values'
+      - 'Only the final game result and no policy term'
+      - 'A KL penalty and a replay-buffer entropy term'
+    correct_choice: 0
+    explanation: 'The loss trains the network to match both the search-improved policy and the eventual game outcome, while also including weight regularization.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 83
+    tags:
+      - ch9
+      - policy-network
+
+  - id: ch9-mcts-node-statistics
+    prompt: 'Which quantities does each MCTS state node maintain according to the chapter?'
+    choices:
+      - 'A Q-value \(Q(s,a)\) and a visit count \(N(s,a)\) for each action'
+      - 'A replay-buffer pointer and a learning rate'
+      - 'A transition matrix and a stationary distribution'
+      - 'A Fisher information matrix and a KL bound'
+    correct_choice: 0
+    explanation: 'The search tree stores action-value estimates and how often each edge has been traversed. Those two quantities drive both selection and the final action distribution.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 84
+    tags:
+      - ch9
+      - mcts
+
+  - id: ch9-mcts-selection-rule
+    prompt: 'What is the purpose of the exploration term in the MCTS selection rule \(Q(s,u) + h\, p_\theta(s,u)\frac{\sqrt{\sum_v N(s,v)}}{1 + N(s,u)}\)?'
+    choices:
+      - 'It encourages exploring actions that have good priors but relatively low visit counts'
+      - 'It guarantees the highest-Q action is always chosen'
+      - 'It removes the need to evaluate terminal states'
+      - 'It forces the visit counts of all actions to remain equal'
+    correct_choice: 0
+    explanation: 'The chapter explicitly relates this term to UCB-style exploration. It balances exploitation of high \(Q\) actions against exploration of promising but under-visited branches.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 84
+    tags:
+      - ch9
+      - mcts
+
+  - id: ch9-new-state-backup
+    prompt: 'When an MCTS simulation reaches a new nonterminal state, what value is backed up along the path?'
+    choices:
+      - 'The policy network value estimate \(v_\theta(\tilde s)\)'
+      - 'The final game result \(z_k\) only'
+      - 'Zero for every edge'
+      - 'The stationary distribution of the policy network'
+    correct_choice: 0
+    explanation: 'For a new leaf state, the tree expands the state and uses the network''s value estimate as the backup signal. Terminal states are handled differently by backing up the actual game result.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 85
+    tags:
+      - ch9
+      - mcts
+
+  - id: ch9-visit-count-policy
+    prompt: 'After many simulations from a state \(s\), how does AlphaZero form the action distribution \(\pi(\cdot|s)\) used for self-play?'
+    choices:
+      - 'By normalizing the visit counts \(N(s,a)\) across actions'
+      - 'By taking the softmax of the raw board coordinates'
+      - 'By using the target network output directly without search'
+      - 'By choosing the action with the smallest Q-value'
+    correct_choice: 0
+    explanation: 'The self-play policy comes from search statistics rather than directly from the raw network output. The chapter writes \(\pi(a|s)\) as visit counts normalized across actions.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 86
+    tags:
+      - ch9
+      - self-play
+
+  - id: ch9-policy-update-gating
+    prompt: 'After one AlphaZero iteration, when is the new policy adopted according to the chapter?'
+    choices:
+      - 'Only if the new policy defeats the old policy when they are pitted against each other'
+      - 'Immediately after one self-play game'
+      - 'Only if its KL divergence from the old policy is zero'
+      - 'Only if its value estimate is exactly 1 on the initial state'
+    correct_choice: 0
+    explanation: 'The chapter describes a head-to-head comparison between the new and old policies after training. The policy is updated only when the new one wins that comparison.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 86
+    tags:
+      - ch9
+      - alphazero
+
+  - id: ch10-ucb-sarsa-setting
+    prompt: 'What problem setting is assumed for UCB-SARSA in Chapter 10?'
+    choices:
+      - 'An episodic MDP with episode length \(H\) and deterministic rewards in \([0,1]\)'
+      - 'An infinite-horizon MDP with unknown discount factor'
+      - 'A multi-armed bandit with Gaussian rewards'
+      - 'A deterministic shortest-path problem with no actions'
+    correct_choice: 0
+    explanation: 'The algorithm is introduced in an episodic finite-horizon setting. The reward assumptions are part of the conditions used later in the regret analysis.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 92
+    tags:
+      - ch10
+      - ucb-sarsa
+
+  - id: ch10-optimistic-initialization
+    prompt: 'How does UCB-SARSA initialize its Q estimates in the chapter?'
+    choices:
+      - 'It sets \(\tilde Q_{1,h}(x,a) = H\) for every state-action-step triple'
+      - 'It sets every Q-value to zero'
+      - 'It copies the optimal value function from value iteration'
+      - 'It initializes Q-values from the stationary distribution'
+    correct_choice: 0
+    explanation: 'The algorithm starts optimistically by assigning large initial Q estimates. This encourages exploration and is a key part of why the later optimism lemma holds.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 92
+    tags:
+      - ch10
+      - optimism
+
+  - id: ch10-greedy-action-under-optimism
+    prompt: 'How does UCB-SARSA choose an action at step \(h\) of an episode?'
+    choices:
+      - 'It chooses the action with the largest current optimistic Q estimate'
+      - 'It samples uniformly from all feasible actions'
+      - 'It uses a fixed \(\epsilon\)-greedy rule'
+      - 'It solves the exact Bellman equation at that state'
+    correct_choice: 0
+    explanation: 'Unlike standard SARSA with \(\epsilon\)-greedy exploration, UCB-SARSA acts greedily with respect to optimistic values. The optimism itself supplies the exploration pressure.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 92
+    tags:
+      - ch10
+      - ucb-sarsa
+
+  - id: ch10-bonus-difference
+    prompt: 'What is the key difference between the UCB-SARSA update and the SARSA update introduced earlier?'
+    choices:
+      - 'UCB-SARSA adds a UCB bonus term \(b_{k,h}\) inside the Q-value update'
+      - 'UCB-SARSA removes the next-state term entirely'
+      - 'UCB-SARSA uses policy iteration instead of temporal-difference learning'
+      - 'UCB-SARSA updates every Q entry at once'
+    correct_choice: 0
+    explanation: 'The chapter explicitly says the important change is the bonus term. That bonus makes less-visited state-action pairs look more promising and therefore encourages exploration.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 92
+    tags:
+      - ch10
+      - optimism
+
+  - id: ch10-state-dependent-learning-rate
+    prompt: 'What form of learning rate does UCB-SARSA use?'
+    choices:
+      - 'A state-dependent rate \(\beta_{k,h} = \frac{H+1}{H+N}\)'
+      - 'A constant rate \(\beta_{k,h} = 1\)'
+      - 'An exponentially decaying rate \(\beta_{k,h} = \alpha^k\)'
+      - 'A KL-based adaptive rate from PPO'
+    correct_choice: 0
+    explanation: 'The algorithm chooses the learning rate as a function of the visit count \(N\). This couples the step size to how much data the algorithm has for that state-action-step combination.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 92
+    tags:
+      - ch10
+      - ucb-sarsa
+
+  - id: ch10-bonus-scaling
+    prompt: 'How is the UCB bonus \(b_{k,h}\) scaled in the chapter?'
+    choices:
+      - 'It is proportional to \(\sqrt{H^3 / N}\), up to a logarithmic factor in \(K\)'
+      - 'It is proportional to \(N^2\)'
+      - 'It is proportional to \(1/H^3\) and independent of \(N\)'
+      - 'It is exactly the empirical reward mean'
+    correct_choice: 0
+    explanation: 'The chapter gives a bonus of the form \(c\sqrt{H^3/N}\), where \(c\) is logarithmic in the number of episodes. The bonus shrinks as the relevant visit count grows.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 92
+    tags:
+      - ch10
+      - optimism
+
+  - id: ch10-regret-definition
+    prompt: 'How is regret defined for UCB-SARSA in the chapter?'
+    choices:
+      - 'As the gap between \(K\) episodes of the optimal initial-state value and the expected value achieved by the learned policies over those episodes'
+      - 'As the number of times the greedy action changes'
+      - 'As the variance of the optimistic Q-values'
+      - 'As the KL divergence between two policies'
+    correct_choice: 0
+    explanation: 'The regret compares the cumulative value of always following the optimal policy against what the sequence of learned policies achieves from the initial state.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 93
+    tags:
+      - ch10
+      - regret
+
+  - id: ch10-regret-decomposition
+    prompt: 'After regret decomposition in Chapter 10, what does the first term (10.1) compare?'
+    choices:
+      - 'The Q-value under the optimal policy versus the optimistic estimate of the current policy''s Q-value'
+      - 'The UCB bonus versus the learning rate'
+      - 'The stationary distributions of two Markov chains'
+      - 'The critic loss versus the actor loss'
+    correct_choice: 0
+    explanation: 'The decomposition separates regret into an optimism term and an estimation-error term. The first term measures whether optimistic estimates are high enough to dominate the optimal Q-values.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 93
+    tags:
+      - ch10
+      - regret
+
+  - id: ch10-optimism-lemma
+    prompt: 'What does Lemma 10.2.1 state, with high probability?'
+    choices:
+      - 'The true Q-value under any policy is bounded above by the optimistic estimate \(\tilde Q_{k,h}(x,a)\)'
+      - 'The optimistic estimate is always smaller than the true Q-value'
+      - 'Every policy is optimal after enough episodes'
+      - 'The learning rate converges to zero in one episode'
+    correct_choice: 0
+    explanation: 'This is the key optimism property of the algorithm. It says the maintained estimates are high enough to upper-bound true policy Q-values with high probability.'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 93
+    tags:
+      - ch10
+      - optimism
+
+  - id: ch10-final-regret-bound
+    prompt: 'What final regret bound does the chapter conclude for UCB-SARSA, up to polylogarithmic factors?'
+    choices:
+      - '\(\tilde O(\sqrt{K})\)'
+      - '\(\tilde O(K)\)'
+      - '\(\tilde O(K^2)\)'
+      - '\(\tilde O(1)\)'
+    correct_choice: 0
+    explanation: 'After using optimism to make the first decomposition term nonpositive, the chapter shows the remaining estimation-error term scales on the order of \(\tilde O(\sqrt{K})\).'
+    citation:
+      source_file: "RL_book.pdf"
+      page: 94
+    tags:
+      - ch10
+      - regret
