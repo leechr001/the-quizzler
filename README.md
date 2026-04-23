@@ -16,6 +16,8 @@ Chris' Overengineered Study Guide is a local-first exam study app that runs enti
 
 ## Getting Started
 
+Share the full project folder with your classmate, then have them run the app from that folder.
+
 Serve the folder locally:
 
 ```bash
@@ -24,9 +26,11 @@ python3 -m http.server 4173
 
 Then visit `http://localhost:4173`.
 
-1. Click `Load ECE 567` to load [question-bank-ECE567.yaml](/Users/chrislee/Projects/TheQuizzler/question-bank-ECE567.yaml), or choose your own YAML file
+1. Click `Load ECE 567` to load [question-bank-ECE567.yaml](question-bank-ECE567.yaml), or choose your own YAML file
 2. Pick the tags you want to study
 3. Start a quiz session
+
+When you are done, stop the local server with `Ctrl+C` in the terminal where it is running.
 
 The built-in `Load ECE 567` option loads the YAML by relative path, so it needs the local server workflow rather than opening `index.html` directly from disk.
 
