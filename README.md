@@ -1,38 +1,9 @@
 # Chris' Overengineered Study Guide
 
-Chris' Overengineered Study Guide is a local-first exam study app that runs entirely in the browser. You load a YAML question bank, pick the tags you want to study, and quiz yourself with shuffled multiple-choice questions. If you miss a question, it comes back after three other questions and stays in rotation until you answer it correctly three times in a row.
-
-## MVP Features
-
-- Local-only workflow
-- Human-editable YAML question bank
-- Tag-based quiz sessions
-- Always-shuffled answer choices
-- Immediate right/wrong feedback
-- Correct answer and explanation after every response
-- Citation display with source filename and page number
-- Review loop for missed questions
-- Local MathJax rendering for TeX-delimited math
 
 ## Getting Started
 
-Share the full project folder with your classmate, then have them run the app from that folder.
-
-Serve the folder locally:
-
-```bash
-python3 -m http.server 4173
-```
-
-Then visit `http://localhost:4173`.
-
-1. Click `Load ECE 567` to load [question-bank-ECE567.yaml](question-bank-ECE567.yaml), or choose your own YAML file
-2. Pick the tags you want to study
-3. Start a quiz session
-
-When you are done, stop the local server with `Ctrl+C` in the terminal where it is running.
-
-The built-in `Load ECE 567` option loads the YAML by relative path, so it needs the local server workflow rather than opening `index.html` directly from disk.
+now hosted with github pages: https://leechr001.github.io/the-quizzler/
 
 ## Question Bank Format
 
@@ -99,13 +70,6 @@ The app uses a built-in lightweight YAML parser so it can stay dependency-free a
 - Multi-line block scalars like `|` and `>` are not supported in this MVP
 - For LaTeX-heavy strings, single-quoted YAML is usually the easiest option because backslashes do not need to be doubled
 
-### Math Delimiters
-
-- Inline math: `\(...\)`
-- Display math: `$$...$$`
-- Display math: `\[...\]`
-
-Single-dollar inline math like `$...$` is intentionally not enabled, so normal dollar amounts do not get parsed as equations by accident.
 
 ## Session Rules
 
