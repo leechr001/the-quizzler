@@ -260,16 +260,18 @@ Better:
 In dynamic programming, why is the state chosen so that the next state depends only on the current state and action?
 ```
 
-## 9. Use Computation Questions Only for Easy, Concept-Driven Arithmetic
+## 9. Use Computation Questions Only for Easy, Concept-Driven, Often Symbolic Work
 
-**Main Idea:** Computation questions are allowed when they can be done comfortably without a calculator and when the arithmetic directly tests a key concept. The point is to check understanding of the formula, not to create bookkeeping work.
+**Main Idea:** Computation questions are allowed when they can be done comfortably without a calculator and when the work directly tests a key concept. The best versions often use symbolic manipulation to check whether the learner knows how a theorem, update rule, or gradient expression is instantiated.
 
-**Use When:** A one-step computation helps test an update rule, Bellman backup, gradient estimate, index calculation, or similar course concept.
+**Use When:** A symbolic derivation helps test an update rule, Bellman backup, gradient theorem, index calculation, or similar course concept.
 
 **Do:**
 
 - Keep the arithmetic simple and mentally manageable.
+- Treat short symbolic derivations of the same scale as the canonical DPG example as still "simple" and "mentally manageable."
 - Allow exact symbolic forms such as `\(\log 4\)` or `\(e^{-2}\)` when that avoids calculator work.
+- Prefer symbolic computation when the important skill is applying the form of a theorem or gradient correctly.
 - Tag these questions clearly with `computation` or an equally explicit arithmetic tag.
 - Use the computation to test a key idea such as how an update works, which quantity changes, or how a policy/value expression is formed.
 - Give all quantities needed to perform the calculation.
@@ -280,12 +282,15 @@ In dynamic programming, why is the state chosen so that the next state depends o
 - Converting naturally exact answers into decimal approximations.
 - Using messy arithmetic or long chains of computation.
 - Writing questions that are only arithmetic practice with little conceptual value.
+- Treating computation as numeric plugging only when a symbolic form would better test the concept.
 
-**Example:**
+**Canonical Example:**
 
 ```text
-With learning rate \(\beta=\tfrac{1}{2}\), reward \(r=4\), discount \(\alpha=\tfrac{1}{2}\), current value \(Q(x,u)=6\), and next-state maximum \(\max_v Q(x'',v)=8\), what is the updated Q-learning value of \(Q(x,u)\)?
+Suppose the critic has closed form \(Q_w(x,u)=\left(\frac{1}{2}(x+wu)-1\right)^2\) and the parameterized actor has the form \(\mu_{\theta}(x)=\frac{1}{1+e^{-\theta x}}\). What is the deterministic policy gradient estimate over a length-\(K\) trajectory?
 ```
+
+This is a strong model because it requires knowing the deterministic policy gradient theorem, applying the correct chain-rule structure, and carrying out only exact symbolic computation. It should also be treated as the benchmark for the most derivation-heavy question that still counts as "simple" and "mentally manageable."
 
 ## 10. Explanations Should Resolve Close Calls
 

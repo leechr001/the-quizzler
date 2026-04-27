@@ -1,0 +1,16 @@
+questions:
+  - id: midterm24-dpg
+    prompt: Suppose the critic has closed form \(Q_w(x,u)=\left(\frac{1}{2}(x+wu)-1\right)^2\) and the parameterized actor has the form \(\mu_{\theta}(x)=\frac{1}{1+e^{-\theta x}}\). What is the deterministic policy gradient estimate over a length-\(K\) trajectory?
+    choices:
+      - \(\nabla_{\theta}J(\theta)=\sum_{k=0}^{K}\alpha^k\,w\left(\frac{1}{2}(x_k+w\mu_{\theta}(x_k))-1\right)\left(\frac{x_k e^{-\theta x_k}}{(1+e^{-\theta x_k})^2}\right)\)
+      - \(\nabla_{\theta}J(\theta)=\sum_{k=0}^{K}\alpha^k\,w\left(\frac{1}{2}(x_0+w\mu_{\theta}(x_0))-1\right)\left(\frac{x_k e^{-\theta x_k}}{(1+e^{-\theta x_k})^2}\right)\)
+      - \(\nabla_{\theta}J(\theta)=\mathbb{E}_{x\sim \rho_\theta,\;u\sim \pi_\theta(\cdot\mid x)}\!\left[Q(x,u)\nabla_\theta \log \pi_\theta(u\mid x)\right]\)
+      - \(\nabla_{\theta}J(\theta)=\sum_{k=0}^{K}\alpha^k\left[w\left(\frac{1}{2}(x_k+w\mu_{\theta}(x_k))-1\right)\mu_{\theta}(x_k)+\left(\frac{1}{2}(x_k+w\mu_{\theta}(x_k))-1\right)^2\left(\frac{x_k e^{-\theta x_k}}{(1+e^{-\theta x_k})^2}\right)\right]\)
+    correct_choice: 0
+    explanation: The deterministic policy gradient uses \(\nabla_u Q_w(x_k,u)\vert_{u=\mu_\theta(x_k)}\,\nabla_\theta \mu_\theta(x_k)\) at each time step, weighted by \(\alpha^k\). Here \(\nabla_u Q_w(x_k,u)=w\left(\frac{1}{2}(x_k+wu)-1\right)\) and \(\nabla_\theta \mu_\theta(x_k)=\frac{x_k e^{-\theta x_k}}{(1+e^{-\theta x_k})^2}\).
+    citation:
+      source_file: midterm-2024.pdf
+      page: 6
+    tags:
+      - deterministic-policy-gradient
+      - computation

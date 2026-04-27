@@ -75,6 +75,7 @@ function captureElements() {
   elements.feedbackAnswer = document.getElementById("feedback-answer");
   elements.feedbackExplanation = document.getElementById("feedback-explanation");
   elements.feedbackReview = document.getElementById("feedback-review");
+  elements.skipReview = document.getElementById("skip-review");
   elements.nextQuestion = document.getElementById("next-question");
   elements.completionCard = document.getElementById("completion-card");
   elements.completionMastered = document.getElementById("completion-mastered");
@@ -90,6 +91,7 @@ function bindEvents() {
   elements.clearTags.addEventListener("click", clearAllTags);
   elements.tagSearch.addEventListener("input", handleTagSearch);
   elements.startSession.addEventListener("click", startSession);
+  elements.skipReview.addEventListener("click", skipReviewForCurrentQuestion);
   elements.nextQuestion.addEventListener("click", advanceSession);
   elements.restartSession.addEventListener("click", startSession);
   document.addEventListener("keydown", handleKeyboardShortcuts);
@@ -481,14 +483,20 @@ function renderFeedback(question) {
 
   const answerState = state.session.answerState;
   const correctAnswer = question.choices[question.correctChoice];
+  const reviewSkipped = Boolean(answerState.reviewSkipped);
   elements.feedbackCard.classList.remove("hidden");
-  elements.feedbackCard.classList.toggle("correct", answerState.isCorrect);
-  elements.feedbackCard.classList.toggle("incorrect", !answerState.isCorrect);
-  elements.feedbackIcon.textContent = answerState.isCorrect ? "OK" : "!";
-  elements.feedbackTitle.textContent = answerState.isCorrect ? "Correct" : "Review this one";
+  elements.feedbackCard.classList.toggle("correct", answerState.isCorrect || reviewSkipped);
+  elements.feedbackCard.classList.toggle("incorrect", !answerState.isCorrect && !reviewSkipped);
+  elements.feedbackIcon.textContent = answerState.isCorrect || reviewSkipped ? "OK" : "!";
+  elements.feedbackTitle.textContent = answerState.isCorrect
+    ? "Correct"
+    : reviewSkipped
+      ? "Review skipped"
+      : "Review this one";
   elements.feedbackAnswer.textContent = correctAnswer;
   elements.feedbackExplanation.textContent = question.explanation;
   elements.feedbackReview.textContent = answerState.reviewMessage;
+  elements.skipReview.classList.toggle("hidden", answerState.isCorrect || reviewSkipped);
 }
 
 function renderCompletion() {
@@ -651,7 +659,27 @@ function submitAnswer(displayIndex) {
     isCorrect,
     badgeText,
     reviewMessage,
+    reviewSkipped: false,
   };
+
+  render();
+}
+
+function skipReviewForCurrentQuestion() {
+  const session = state.session;
+  const question = getCurrentQuestion();
+
+  if (!session || !question || !session.answerState || session.answerState.isCorrect) {
+    return;
+  }
+
+  session.reviewStates.delete(question.id);
+  session.questionsNeedingReview.delete(question.id);
+  session.mastered.add(question.id);
+  session.wrongAttempts = Math.max(0, session.wrongAttempts - 1);
+  session.answerState.reviewMessage = "Misclick ignored";
+  session.answerState.badgeText = "Fresh question";
+  session.answerState.reviewSkipped = true;
 
   render();
 }

@@ -2661,14 +2661,14 @@ questions:
     tags:
       - policy-gradient
   - id: midterm24-dpg-actor-derivative
-    prompt: For the actor \(\mu_\theta(x)=\frac{1}{1+e^{-\theta x}}\), what is \(\nabla_\theta \mu_\theta(x)\)?
+    prompt: In the deterministic policy gradient term \(\nabla_u Q_w(x,u)\vert_{u=\mu_\theta(x)}\,\nabla_\theta \mu_\theta(x)\), what is \(\nabla_\theta \mu_\theta(x)\) for the actor \(\mu_\theta(x)=\frac{1}{1+e^{-\theta x}}\)?
     choices:
       - "\\(\\frac{x e^{-\\theta x}}{(1+e^{-\\theta x})^2}\\)"
       - "\\(\\frac{\\theta e^{-\\theta x}}{(1+e^{-\\theta x})^2}\\)"
       - "\\(\\frac{x}{1+e^{-\\theta x}}\\)"
       - "\\(\\frac{x e^{\\theta x}}{(1+e^{-\\theta x})^2}\\)"
     correct_choice: 0
-    explanation: Differentiating the sigmoid actor with respect to \(\theta\) yields the input \(x\) times the usual sigmoid derivative factor.
+    explanation: This is the actor-side factor in deterministic policy gradient. Differentiating the sigmoid with respect to \(\theta\) yields the input \(x\) times the usual sigmoid derivative factor.
     citation:
       source_file: midterm-2024.pdf
       page: 6
@@ -2676,14 +2676,14 @@ questions:
       - policy-gradient
       - computation
   - id: midterm24-dpg-critic-action-derivative
-    prompt: For the critic \(Q_w(x,u)=\left(\frac{1}{2}(x+wu)-1\right)^2\), what is \(\nabla_u Q_w(x,u)\)?
+    prompt: In the deterministic policy gradient term \(\nabla_u Q_w(x,u)\vert_{u=\mu_\theta(x)}\,\nabla_\theta \mu_\theta(x)\), what is \(\nabla_u Q_w(x,u)\) for the critic \(Q_w(x,u)=\left(\frac{1}{2}(x+wu)-1\right)^2\)?
     choices:
       - "\\(w\\left(\\frac{1}{2}(x+wu)-1\\right)\\)"
       - "\\(x\\left(\\frac{1}{2}(x+wu)-1\\right)\\)"
       - "\\(w(x+wu-1)\\)"
       - "\\(\\left(\\frac{1}{2}(x+wu)-1\\right)^2\\)"
     correct_choice: 0
-    explanation: Applying the chain rule gives the derivative of the square times the derivative of the inner linear term with respect to \(u\).
+    explanation: This is the critic-side factor in deterministic policy gradient. Applying the chain rule gives the derivative of the square times the derivative of the inner linear term with respect to \(u\).
     citation:
       source_file: midterm-2024.pdf
       page: 6
@@ -2747,7 +2747,6 @@ questions:
       page: 9
     tags:
       - mcts
-      - computation
   - id: midterm24-mcts-backup-winning-player
     prompt: In a two-player zero-sum AlphaZero search, if Player 2 wins at the terminal state, what backed-up value should be used for an edge chosen by Player 2 on the simulated path?
     choices:
@@ -2777,14 +2776,14 @@ questions:
     tags:
       - mcts
   - id: midterm24-mcts-policy-from-counts
-    prompt: After many MCTS simulations from a state \(s\), how does AlphaZero form the self-play policy \(\pi(a|s)\) from visit counts?
+    prompt: After many MCTS simulations from a state \(s\), suppose the root counts are \(N(s,a_1)=5\), \(N(s,a_2)=3\), and \(N(s,a_3)=2\). Using \(\pi(a\mid s)=\frac{N(s,a)}{\sum_{a'}N(s,a')}\), what is \(\pi(a_1\mid s)\)?
     choices:
-      - "\\(\\pi(a|s)=\\frac{N(s,a)}{\\sum_{a'}N(s,a')}\\)"
-      - "\\(\\pi(a|s)=\\frac{Q(s,a)}{\\sum_{a'}Q(s,a')}\\)"
-      - "\\(\\pi(a|s)=\\arg\\max_a Q(s,a)\\)"
-      - "\\(\\pi(a|s)=p_\\theta(s,a)\\)"
+      - "\\(\\tfrac{1}{2}\\)"
+      - "\\(\\tfrac{3}{10}\\)"
+      - "\\(\\tfrac{1}{5}\\)"
+      - "\\(\\tfrac{5}{8}\\)"
     correct_choice: 0
-    explanation: AlphaZero uses normalized visit counts from search, not raw Q-values or raw priors, to define the self-play action distribution.
+    explanation: The total visit count is \(5+3+2=10\), so the normalized policy puts mass \(5/10=\tfrac12\) on \(a_1\). This tests the normalized-count rule, not raw counts, Q-values, or priors.
     citation:
       source_file: midterm-2024.pdf
       page: 9
@@ -3914,14 +3913,14 @@ questions:
       - policy-gradient
       - deterministic-policy-gradient
   - id: lec15-dpg-chain-rule-computation
-    prompt: 'Suppose \(Q(s,a)=2a+s\) and \(\mu_\theta(s)=\theta s\). At state \(s=1\), what is \(\frac{\partial}{\partial \theta}Q(s,\mu_\theta(s))\)?'
+    prompt: 'Under the deterministic policy gradient term \(\nabla_a Q(s,a)\vert_{a=\mu_\theta(s)}\,\nabla_\theta \mu_\theta(s)\), suppose \(Q(s,a)=2a+s\) and \(\mu_\theta(s)=\theta s\). At state \(s=1\), what value does this product take?'
     choices:
       - '\(1\)'
       - '\(2\)'
       - '\(2\theta+1\)'
       - '\(\theta\)'
     correct_choice: 1
-    explanation: 'By the chain rule, \(\frac{\partial Q}{\partial a}=2\) and \(\frac{\partial \mu_\theta(1)}{\partial \theta}=1\), so the product is \(2\). This is exactly the kind of actor-side derivative DPG uses.'
+    explanation: 'This is a direct instantiation of the deterministic policy gradient chain rule. Here \(\nabla_a Q(s,a)=2\) and \(\nabla_\theta \mu_\theta(1)=1\), so the actor-side product is \(2\).'
     citation:
       source_file: lecture-15.pdf
       page: 1
@@ -5385,14 +5384,14 @@ questions:
       - cmdp
       - safe-rl
   - id: lec25-occupancy-to-policy-computation
-    prompt: 'If \(q_h(0,0)=0.3\) and \(q_h(0,1)=0.2\), what is \(\pi_h(0\mid 0)\) under \(\pi_h(a\mid x)=\frac{q_h(x,a)}{\sum_u q_h(x,u)}\)?'
+    prompt: 'If \(q_h(0,0)=\tfrac{3}{10}\) and \(q_h(0,1)=\tfrac{1}{5}\), what is \(\pi_h(0\mid 0)\) under \(\pi_h(a\mid x)=\frac{q_h(x,a)}{\sum_u q_h(x,u)}\)?'
     choices:
-      - '\(0.6\)'
-      - '\(0.4\)'
-      - '\(0.5\)'
-      - '\(0.3\)'
+      - '\(\tfrac{3}{5}\)'
+      - '\(\tfrac{2}{5}\)'
+      - '\(\tfrac{1}{2}\)'
+      - '\(\tfrac{3}{10}\)'
     correct_choice: 0
-    explanation: 'For state \(0\), the denominator is \(0.3+0.2=0.5\), so \(\pi_h(0\mid 0)=0.3/0.5=0.6\). This is a direct use of the occupancy-to-policy conversion.'
+    explanation: 'The denominator is \(\tfrac{3}{10}+\tfrac{1}{5}=\tfrac{1}{2}\), so \(\pi_h(0\mid 0)=\frac{3/10}{1/2}=\tfrac{3}{5}\). This is a direct use of the occupancy-to-policy normalization rule.'
     citation:
       source_file: lecture-25.pdf
       page: 1
@@ -5490,3 +5489,1464 @@ questions:
     tags:
       - cmdp
       - safe-rl
+  - id: lec10-td-loss-formula-id
+    prompt: 'Which method is most directly associated with minimizing the one-step loss \(\tfrac12\big(Q(x,u;w)-[r(x,u)+\alpha\max_v Q(x^\prime,v;w)]\big)^2\) using a neural network approximator?'
+    choices:
+      - 'Deep Q-learning with nonlinear function approximation'
+      - 'REINFORCE'
+      - 'Natural policy gradient'
+      - 'DPO'
+    correct_choice: 0
+    explanation: 'That is the lecture''s nonlinear TD-style objective for Q-learning with a neural network. REINFORCE and natural policy gradient optimize policies directly rather than bootstrapping a max-over-actions Q target.'
+    citation:
+      source_file: lecture-10.pdf
+      page: 1
+    tags:
+      - nonlinear-function-approximation
+      - dqn
+  - id: lec10-improper-gradient
+    prompt: 'Why does the lecture call \(\delta_k(w)\nabla_w Q(x_k,u_k;w)\) an "improper" gradient for nonlinear TD learning?'
+    choices:
+      - 'Because the target term \(r_k+\alpha\max_v Q(x_{k+1},v;w)\) also depends on \(w\), but its derivative is ignored'
+      - 'Because the gradient is taken with respect to the state instead of the weights'
+      - 'Because the reward \(r_k\) is differentiated twice'
+      - 'Because the maximization over \(v\) makes the loss identically zero'
+    correct_choice: 0
+    explanation: 'The update treats the bootstrap target as fixed even though it is built from the same network parameters. That mismatch is exactly why the lecture labels the gradient "improper."'
+    citation:
+      source_file: lecture-10.pdf
+      page: 1
+    tags:
+      - nonlinear-function-approximation
+      - dqn
+  - id: lec10-neuron-hyperplane
+    prompt: 'For a single neuron with vector input \(x\) and output \(\sigma(w^\top x+b)\), what does the equation \(w^\top x+b=0\) represent?'
+    choices:
+      - 'A hyperplane that divides the input space into two regions'
+      - 'The stationary distribution of the neuron outputs'
+      - 'The Bellman optimality boundary for Q-values'
+      - 'A normalization constraint forcing \(\|w\|_2=1\)'
+    correct_choice: 0
+    explanation: 'Before the nonlinearity is applied, \(w^\top x+b\) is an affine score. Setting it equal to zero defines a hyperplane separating inputs by the sign of that score.'
+    citation:
+      source_file: lecture-10.pdf
+      page: 1
+    tags:
+      - nonlinear-function-approximation
+  - id: lec10-last-layer-derivative
+    prompt: 'In the lecture''s two-layer backprop example, which expression matches \(\frac{\partial \hat Q(x,u;w)}{\partial w_{211}}\)?'
+    choices:
+      - '\(\sigma^\prime(z_{21})\,y_{11}\)'
+      - '\(\sigma^\prime(z_{11})\,y_{01}\)'
+      - '\(w_{211}\sigma^\prime(z_{11})\,y_{01}\)'
+      - '\(\sigma^\prime(z_{21})\,w_{211}\)'
+    correct_choice: 0
+    explanation: 'For an output-layer weight, the derivative is local: derivative of the output nonlinearity times the incoming activation. The hidden-layer derivative is the one that pulls in an extra downstream weight.'
+    citation:
+      source_file: lecture-10.pdf
+      page: 1
+    tags:
+      - nonlinear-function-approximation
+  - id: lec10-hidden-layer-derivative
+    prompt: 'Which chain-rule structure appears in \(\frac{\partial \hat Q(x,u;w)}{\partial w_{111}}\) for the lecture''s multilayer network example?'
+    choices:
+      - '\(\sigma^\prime(z_{21})\,w_{211}\,\sigma^\prime(z_{11})\,y_{01}\)'
+      - '\(\sigma^\prime(z_{21})\,y_{11}\)'
+      - '\(\sigma^\prime(z_{11})\,y_{11}\)'
+      - '\(w_{111}\,\sigma^\prime(z_{21})\)'
+    correct_choice: 0
+    explanation: 'A hidden-layer weight affects the output only through the downstream path, so the derivative needs both local nonlinear derivatives and the downstream weight \(w_{211}\).'
+    citation:
+      source_file: lecture-10.pdf
+      page: 1
+    tags:
+      - nonlinear-function-approximation
+  - id: lec10-forward-vs-backward
+    prompt: 'In the lecture''s neural-network TD update, which quantities are obtained from forward propagation and which from backward propagation?'
+    choices:
+      - 'Forward propagation computes activations like \(z\) and \(y\); backward propagation combines local derivatives and downstream weights to produce \(\nabla_w \hat Q\)'
+      - 'Forward propagation computes \(\nabla_w \hat Q\); backward propagation computes only the reward sample \(r_k\)'
+      - 'Forward propagation computes the stationary distribution; backward propagation computes the Bellman operator'
+      - 'Forward propagation computes the action set; backward propagation computes the replay buffer'
+    correct_choice: 0
+    explanation: 'The lecture splits the job exactly this way: first evaluate the network to get intermediate activations, then backpropagate local derivative information to obtain the weight gradient.'
+    citation:
+      source_file: lecture-10.pdf
+      page: 1
+    tags:
+      - nonlinear-function-approximation
+  - id: lec10-local-derivative-source
+    prompt: 'Why does the lecture emphasize that \(\sigma^\prime(\cdot)\) can be computed "locally" at a neuron?'
+    choices:
+      - 'Because once the neuron''s preactivation is known, its activation derivative depends only on that local value'
+      - 'Because the derivative is always equal to one'
+      - 'Because it depends only on the reward sample \(r_k\)'
+      - 'Because it never depends on the chosen activation function'
+    correct_choice: 0
+    explanation: 'A local derivative in backprop means you do not need the entire network again to compute that factor; the preactivation at that neuron is enough. Of course the value still depends on which activation function is used.'
+    citation:
+      source_file: lecture-10.pdf
+      page: 1
+    tags:
+      - nonlinear-function-approximation
+  - id: lec10-gradient-step-computation
+    prompt: 'Suppose a particular weight has current value \(w=5\), step size \(\beta=\tfrac12\), TD error term \(\delta_k(w)=2\), and local derivative \(\frac{\partial \hat Q}{\partial w}=3\). Under the lecture''s gradient step \(w\leftarrow w-\beta\,\delta_k(w)\,\frac{\partial \hat Q}{\partial w}\), what is the updated weight?'
+    choices:
+      - '\(2\)'
+      - '\(3\)'
+      - '\(4\)'
+      - '\(8\)'
+    correct_choice: 0
+    explanation: 'The update is \(5-\tfrac12\cdot 2\cdot 3=5-3=2\). This is a simple arithmetic check on how the TD error scales the backpropagated gradient.'
+    citation:
+      source_file: lecture-10.pdf
+      page: 1
+    tags:
+      - nonlinear-function-approximation
+      - computation
+  - id: lec10-deep-q-update-role
+    prompt: 'In the lecture''s final deep Q-learning update \(w_{111}\leftarrow w_{111}-\beta\,\delta(w)\,\frac{\partial \hat Q(x,u;w)}{\partial w_{111}}\), what role does \(\delta(w)\) play?'
+    choices:
+      - 'It scales the backpropagated sensitivity by how large the current TD mismatch is'
+      - 'It is the stationary probability of visiting \((x,u)\)'
+      - 'It chooses which activation function the network should use'
+      - 'It replaces the reward \(r_k\) in the Bellman target'
+    correct_choice: 0
+    explanation: 'The local derivative tells how the output changes with the weight, while \(\delta(w)\) tells how wrong the current Q estimate is. Their product is what drives the correction size.'
+    citation:
+      source_file: lecture-10.pdf
+      page: 1
+    tags:
+      - nonlinear-function-approximation
+      - dqn
+  - id: lec10-activation-family
+    prompt: 'Which of the following is an activation-function family explicitly highlighted in the lecture''s neural-network preliminaries?'
+    choices:
+      - 'Sigmoid, ReLU, and Leaky ReLU'
+      - 'Bellman, Gibbs, and KL'
+      - 'UCB, Beta, and Bradley-Terry'
+      - 'Primal, dual, and complementary'
+    correct_choice: 0
+    explanation: 'The lecture introduces standard neuron nonlinearities before discussing backpropagation. The distractors borrow names from other course topics, but not from activation design.'
+    citation:
+      source_file: lecture-10.pdf
+      page: 1
+    tags:
+      - nonlinear-function-approximation
+  - id: lec11-replay-buffer-purpose
+    prompt: 'What instability does the replay buffer primarily address in deep Q-learning?'
+    choices:
+      - 'Successive reinforcement-learning samples are highly correlated, while SGD works best with approximately i.i.d. data'
+      - 'The action space becomes continuous over time'
+      - 'The Bellman target stops depending on the next state'
+      - 'The policy gradient vanishes identically'
+    correct_choice: 0
+    explanation: 'Experience replay is motivated from a supervised-learning perspective: SGD behaves better when the samples are less correlated. The buffer lets the learner revisit and reshuffle past experience.'
+    citation:
+      source_file: lecture-11.pdf
+      page: 1
+    tags:
+      - dqn
+  - id: lec11-target-network-role
+    prompt: 'From the supervised-learning viewpoint in the lecture, why is a target network introduced?'
+    choices:
+      - 'To make the target value \(y_k\) behave more like an external label by keeping its defining network fixed for a while'
+      - 'To estimate the transition kernel directly'
+      - 'To replace the replay buffer with a stationary distribution'
+      - 'To turn Q-learning into REINFORCE'
+    correct_choice: 0
+    explanation: 'The target network slows the motion of the bootstrap target. Without it, the model is trying to fit labels that it is simultaneously changing with the same parameters.'
+    citation:
+      source_file: lecture-11.pdf
+      page: 1
+    tags:
+      - dqn
+  - id: lec11-dqn-target-formula-id
+    prompt: 'Which algorithm uses target values of the form \(y_{k,b}=r_{k,b}+\gamma \max_v Q_{\mathrm{target}}(x_{k+1,b},v)\) inside an MSE loss over a replay minibatch?'
+    choices:
+      - 'DQN'
+      - 'Double DQN'
+      - 'REINFORCE'
+      - 'TRPO'
+    correct_choice: 0
+    explanation: 'That is the classic DQN target: the target network both selects and evaluates the maximizing action. Double DQN changes exactly that coupling.'
+    citation:
+      source_file: lecture-11.pdf
+      page: 1
+    tags:
+      - dqn
+  - id: lec11-overestimation-source
+    prompt: 'What is the core reason Q-learning can overestimate action values under noisy function approximation?'
+    choices:
+      - 'The same noisy estimates are used inside a maximization, and \(\mathbb{E}[\max_v X_v]\ge \max_v \mathbb{E}[X_v]\)'
+      - 'The learning rate is always too large in deep networks'
+      - 'The Bellman equation assumes deterministic rewards'
+      - 'The replay buffer introduces a downward bias in every target'
+    correct_choice: 0
+    explanation: 'The lecture''s overestimation story is a max-over-noise story. It is not primarily about learning-rate choice, deterministic rewards, or replay.'
+    citation:
+      source_file: lecture-11.pdf
+      page: 1
+    tags:
+      - double-q
+      - dqn
+  - id: lec11-double-estimator-idea
+    prompt: 'What is the key idea of the double estimator before double Q-learning?'
+    choices:
+      - 'Separate the maximizer-selection sample set from the evaluation sample set'
+      - 'Average the same maximization estimate twice to reduce variance'
+      - 'Use the largest of two noisy maxima to avoid underestimation'
+      - 'Replace the max with a softmax over rewards only'
+    correct_choice: 0
+    explanation: 'The lecture explicitly describes the double estimator as separating maximization from evaluation. That is the mechanism that counters the upward bias of the single estimator.'
+    citation:
+      source_file: lecture-11.pdf
+      page: 1
+    tags:
+      - double-q
+  - id: lec11-double-dqn-selection-evaluation
+    prompt: 'In Double DQN, which network selects the next action and which network evaluates it when forming the target?'
+    choices:
+      - 'The online network selects the action, and the target network evaluates it'
+      - 'The target network selects the action, and the online network evaluates it'
+      - 'The online network does both'
+      - 'The target network does both'
+    correct_choice: 0
+    explanation: 'Double DQN keeps the target network for evaluation but uses the online network for argmax selection. That is the practical version of separating action selection from action evaluation.'
+    citation:
+      source_file: lecture-11.pdf
+      page: 1
+    tags:
+      - ddqn
+  - id: lec11-clipped-double-q
+    prompt: 'What quantity defines the target in clipped double-Q learning?'
+    choices:
+      - '\(r+\alpha \min\{\max_u Q(x^\prime,u;w),\max_u Q(x^\prime,u;w^\prime)\}\)'
+      - '\(r+\alpha \max_u \min\{Q(x^\prime,u;w),Q(x^\prime,u;w^\prime)\}\)'
+      - '\(r+\alpha \frac12\left[\max_u Q(x^\prime,u;w)+\max_u Q(x^\prime,u;w^\prime)\right]\)'
+      - '\(r+\alpha Q(x^\prime,\mu(x^\prime);w)\)'
+    correct_choice: 0
+    explanation: 'The lecture''s clipped double-Q target takes the smaller of the two critic maxima. The second option is a different expression and is not what is written in the slides.'
+    citation:
+      source_file: lecture-11.pdf
+      page: 1
+    tags:
+      - double-q
+  - id: lec11-dueling-identifiability
+    prompt: 'Why is the decomposition \(Q(s,a)=V(s)+A(s,a)\) unidentifiable without an extra constraint in dueling networks?'
+    choices:
+      - 'Because adding a constant to \(V(s)\) and subtracting the same constant from \(A(s,a)\) leaves \(Q(s,a)\) unchanged'
+      - 'Because \(V(s)\) and \(A(s,a)\) must always have opposite signs'
+      - 'Because \(A(s,a)\) is defined only for continuous actions'
+      - 'Because the replay buffer stores only \(Q\)-values and not advantages'
+    correct_choice: 0
+    explanation: 'The issue is representational nonuniqueness. That is why the lecture discusses subtract-max or subtract-mean normalizations when building dueling architectures.'
+    citation:
+      source_file: lecture-11.pdf
+      page: 1
+    tags:
+      - dqn
+      - dueling-network
+  - id: lec11-prioritized-replay
+    prompt: 'Which replay strategy does the lecture describe as sampling experiences based on the magnitude of their TD error?'
+    choices:
+      - 'Prioritized replay'
+      - 'Uniform replay'
+      - 'Double replay'
+      - 'On-policy replay'
+    correct_choice: 0
+    explanation: 'Prioritized replay focuses updates on experiences whose TD error is currently large. Uniform replay is the simpler baseline that ignores this ranking information.'
+    citation:
+      source_file: lecture-11.pdf
+      page: 1
+    tags:
+      - dqn
+  - id: lec11-multistep-target-formula
+    prompt: 'Which target has the form \(r_k^{(n)}+\alpha^n\max_v Q(x_{k+n},v;w)\), where \(r_k^{(n)}=r_k+\alpha r_{k+1}+\cdots+\alpha^{n-1}r_{k+n-1}\)?'
+    choices:
+      - 'An \(n\)-step bootstrapped target'
+      - 'The one-step DQN target'
+      - 'The REINFORCE return from time 0'
+      - 'The dueling-network aggregation formula'
+    correct_choice: 0
+    explanation: 'This is the lecture''s multi-step target idea: use several rewards before bootstrapping. The one-step DQN target corresponds to \(n=1\), but the full expression shown is the \(n\)-step version.'
+    citation:
+      source_file: lecture-11.pdf
+      page: 1
+    tags:
+      - dqn
+      - multi-step-td
+  - id: lec12-infinite-action-motivation
+    prompt: 'Why does the lecture turn from Q-learning toward policy-based methods when the action space is infinite or continuous?'
+    choices:
+      - 'Because maximizing over actions becomes hard, while a parameterized policy can output an action distribution or action directly'
+      - 'Because value functions cannot be defined for continuous actions'
+      - 'Because Bellman equations fail outside finite action spaces'
+      - 'Because policy-based methods require no critic or evaluation step'
+    correct_choice: 0
+    explanation: 'The difficulty is the optimization over actions, not the existence of value functions. Policy-based methods avoid an explicit max over a large or continuous action set.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec12-actor-critic-roles
+    prompt: 'In the lecture''s actor-critic view of generalized policy iteration, which pairing is correct?'
+    choices:
+      - 'Critic: estimate value or Q information for the current policy; Actor: improve the policy using that information'
+      - 'Critic: choose actions greedily; Actor: estimate the stationary distribution'
+      - 'Critic: compute the replay buffer; Actor: estimate the Bellman operator'
+      - 'Critic: define the action space; Actor: solve the dual problem'
+    correct_choice: 0
+    explanation: 'The actor-critic split mirrors policy iteration: evaluation on one side, improvement on the other. The wrong answers swap in unrelated roles from other parts of the course.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+      - actor-critic
+  - id: lec12-gibbs-policy-formula
+    prompt: 'Which policy family has the form \(\pi_w(a\mid x)=\frac{\exp(w^\top \phi(x,a))}{\sum_{u\in A}\exp(w^\top \phi(x,u))}\)?'
+    choices:
+      - 'Gibbs or softmax policy'
+      - 'Gaussian policy'
+      - 'Deterministic policy gradient policy'
+      - 'Double-Q policy'
+    correct_choice: 0
+    explanation: 'That normalized exponential form is the finite-action Gibbs policy. Gaussian policies are densities over continuous actions, not softmaxes over discrete ones.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec12-gaussian-score
+    prompt: 'For the lecture''s Gaussian policy with mean \(\mu_w(x)=\phi(x)^\top w\) and covariance \(\sigma^2 I\), which score function is correct?'
+    choices:
+      - '\(\nabla_w \log \pi_w(u\mid x)=\frac{u-\mu_w(x)}{\sigma^2}\phi(x)\)'
+      - '\(\nabla_w \log \pi_w(u\mid x)=\phi(x,u)-\mathbb{E}_{\pi_w}[\phi(x,\cdot)]\)'
+      - '\(\nabla_w \log \pi_w(u\mid x)=u\,\sigma^2\phi(x)\)'
+      - '\(\nabla_w \log \pi_w(u\mid x)=Q_w(x,u)\phi(x)\)'
+    correct_choice: 0
+    explanation: 'The first expression is the Gaussian-policy score given in the lecture. The second is the Gibbs-policy score, which is a tempting but different same-family distractor.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec12-policy-gradient-theorem-formula
+    prompt: 'Which theorem gives \(\nabla_w V_w(x_0)=\mathbb{E}_{x\sim \rho_w,\;u\sim \pi_w}[Q_w(x,u)\nabla_w \log \pi_w(u\mid x)]\)?'
+    choices:
+      - 'The policy gradient theorem'
+      - 'The performance difference lemma'
+      - 'The contraction mapping theorem'
+      - 'The deterministic policy gradient theorem'
+    correct_choice: 0
+    explanation: 'That expectation over discounted states and policy actions is the core policy gradient theorem. The deterministic policy gradient theorem replaces the score function with an action-gradient chain rule.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec12-discounted-state-distribution
+    prompt: 'What is \(\rho_w(x)=(1-\alpha)\sum_{k=0}^\infty \alpha^k P(x_k=x)\) in the lecture?'
+    choices:
+      - 'The discounted state distribution under policy \(w\)'
+      - 'The stationary action distribution'
+      - 'The replay-buffer sampling distribution'
+      - 'The advantage function of the current policy'
+    correct_choice: 0
+    explanation: 'The policy gradient theorem weights states by discounted visitation frequency, which is exactly what \(\rho_w\) encodes. It is not a stationary action distribution or a replay-buffer artifact.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec12-gibbs-score-family
+    prompt: 'For a Gibbs policy, which expression belongs to the same concept family as the score function and is correct?'
+    choices:
+      - '\(\nabla_w \log \pi_w(u\mid x)=\phi(x,u)-\mathbb{E}_{\pi_w}[\phi(x,\cdot)]\)'
+      - '\(\nabla_w \log \pi_w(u\mid x)=\frac{u-\mu_w(x)}{\sigma^2}\phi(x)\)'
+      - '\(\nabla_w \log \pi_w(u\mid x)=Q_w(x,u)-V_w(x)\)'
+      - '\(\nabla_w \log \pi_w(u\mid x)=\nabla_w Q_w(x,u)\)'
+    correct_choice: 0
+    explanation: 'The first option is the Gibbs-policy score. The Gaussian-score formula is a close same-family distractor, while the other two are useful policy-gradient quantities but not score functions.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec12-reinforce-formula-id
+    prompt: 'Which algorithm updates parameters using episode returns in the form \(w\leftarrow w+\beta \alpha^k \nabla_w \log \pi_w(u_k\mid x_k)\sum_{\tau=k}^{T-1}\alpha^{\tau-k} r(x_\tau,u_\tau)\)?'
+    choices:
+      - 'REINFORCE'
+      - 'SARSA'
+      - 'DQN'
+      - 'TRPO'
+    correct_choice: 0
+    explanation: 'That is the Monte Carlo score-function update of REINFORCE. SARSA and DQN are value-based, and TRPO uses a trust-region surrogate rather than a raw episode-return multiplier.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+      - reinforce
+  - id: lec12-reinforce-return-computation
+    prompt: 'If \(\alpha=\tfrac12\) and the rewards from time \(k\) onward are \(r_k=4\) and \(r_{k+1}=2\) with no later rewards, what reward-to-go does REINFORCE use at step \(k\)?'
+    choices:
+      - '\(5\)'
+      - '\(3\)'
+      - '\(6\)'
+      - '\(2\)'
+    correct_choice: 0
+    explanation: 'The reward-to-go is \(4+\tfrac12\cdot 2=5\). This keeps the arithmetic easy while still checking that the learner knows how the Monte Carlo target is formed.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+      - reinforce
+      - computation
+  - id: lec12-reinforce-on-policy
+    prompt: 'Why is REINFORCE an on-policy algorithm in the lecture''s presentation?'
+    choices:
+      - 'Because its gradient estimate uses trajectories generated by the current policy itself'
+      - 'Because it always removes randomness from the policy after each episode'
+      - 'Because it requires a replay buffer filled by older policies'
+      - 'Because it updates the critic and actor with the same Bellman target'
+    correct_choice: 0
+    explanation: 'REINFORCE estimates the gradient from trajectories drawn under the current policy. That is the defining on-policy feature, not determinism or replay.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+      - reinforce
+  - id: lec13-critic-needs-q
+    prompt: 'Why does the lecture say the critic often estimates a Q-function rather than only a state-value function?'
+    choices:
+      - 'Because the actor needs action-specific information to compare or improve actions'
+      - 'Because state values cannot be defined for stochastic policies'
+      - 'Because Q-functions do not depend on the transition kernel'
+      - 'Because only Q-functions have finite variance'
+    correct_choice: 0
+    explanation: 'A policy-improvement step needs to know how different actions compare at the same state. That is exactly the information a Q-function provides more directly than a pure state-value estimate.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+      - actor-critic
+  - id: lec13-gaussian-policy-mean
+    prompt: 'In the lecture''s Gaussian policy, how is the mean \(\mu_w(x)\) parameterized?'
+    choices:
+      - '\(\mu_w(x)=\phi(x)^\top w\)'
+      - '\(\mu_w(x)=\exp(\phi(x)^\top w)\)'
+      - '\(\mu_w(x)=Q_w(x,a)\)'
+      - '\(\mu_w(x)=\Sigma_w(x)^{-1}w\)'
+    correct_choice: 0
+    explanation: 'The Gaussian policy in the slides uses a linear mean parameterization and isotropic covariance \(\sigma^2 I\). The other choices mix in unrelated objects like Q-values or nonlinear transforms not used there.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec13-score-function-identity
+    prompt: 'Which identity is used in the policy-gradient theorem proof to rewrite \(\nabla_w \pi_w(u\mid x)\)?'
+    choices:
+      - '\(\nabla_w \pi_w(u\mid x)=\pi_w(u\mid x)\nabla_w \log \pi_w(u\mid x)\)'
+      - '\(\nabla_w \pi_w(u\mid x)=Q_w(x,u)\nabla_w \log \pi_w(u\mid x)\)'
+      - '\(\nabla_w \pi_w(u\mid x)=\nabla_w Q_w(x,u)\)'
+      - '\(\nabla_w \pi_w(u\mid x)=\rho_w(x)\pi_w(u\mid x)\)'
+    correct_choice: 0
+    explanation: 'This likelihood-ratio identity is the algebraic bridge that introduces the score function into the theorem. The other expressions mix in value or visitation terms that do not belong to this step.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec13-proof-recursion
+    prompt: 'In the lecture''s proof of the policy gradient theorem, what term appears after expanding \(\nabla_w Q_w(i,u)\) and averaging over the next state?'
+    choices:
+      - '\(\alpha\,\mathbb{E}[\nabla_w V_w(x_1)\mid x_0=i,u_0\sim \pi_w(\cdot\mid x_0)]\)'
+      - '\(\alpha\,\mathbb{E}[\nabla_w \log \pi_w(u_0\mid x_0)]\)'
+      - '\(\mathbb{E}[Q_w(i,u_0)]\) with no gradient term'
+      - '\(\mathrm{KL}(\pi_{\tilde w}\|\pi_w)\)'
+    correct_choice: 0
+    explanation: 'The proof pushes the derivative forward one step through the Bellman recursion, creating the \(\alpha\,\mathbb{E}[\nabla_w V_w(x_1)]\) term. Repeating this recursion yields the infinite discounted sum.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec13-infinite-sum-form
+    prompt: 'Which expression matches the lecture''s unfolded policy-gradient theorem before rewriting it using \(\rho_w\)?'
+    choices:
+      - '\(\mathbb{E}\!\left[\sum_{k=0}^{\infty}\alpha^k \nabla_w \log \pi_w(u_k\mid x_k)\,Q_w(x_k,u_k)\right]\)'
+      - '\(\mathbb{E}\!\left[\sum_{k=0}^{\infty}\nabla_w Q_w(x_k,u_k)\right]\)'
+      - '\(\mathbb{E}\!\left[\sum_{k=0}^{\infty}\alpha^k V_w(x_k)\right]\)'
+      - '\(\mathbb{E}\!\left[\sum_{k=0}^{\infty}\alpha^k \mathrm{KL}(\pi_w\|\pi_{\mathrm{ref}})\right]\)'
+    correct_choice: 0
+    explanation: 'The theorem is first expressed as a discounted sum of score-function terms times action values along the trajectory. The \(\rho_w\) form comes only after regrouping this sum by state-action pairs.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec13-rho-rewriting
+    prompt: 'Why does a factor of \(\frac{1}{1-\alpha}\) appear when rewriting the policy-gradient theorem using the discounted state distribution \(\rho_w\)?'
+    choices:
+      - 'Because \(\rho_w(x)\) is defined with the normalization factor \((1-\alpha)\sum_{k=0}^\infty \alpha^k P(x_k=x)\)'
+      - 'Because the gradient theorem assumes exactly one action per state'
+      - 'Because REINFORCE divides returns by \(1-\alpha\) at every step'
+      - 'Because the Fisher information matrix is scaled by \(1-\alpha\)'
+    correct_choice: 0
+    explanation: 'The normalization is built into the definition of \(\rho_w\). When the infinite discounted sum is regrouped into an expectation under \(\rho_w\), the reciprocal factor \(\frac{1}{1-\alpha}\) appears naturally.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+  - id: lec13-reinforce-q-estimate-formula
+    prompt: 'Which expression is the lecture''s Monte Carlo estimate of \(Q_w(x_k,u_k)\) used by REINFORCE?'
+    choices:
+      - '\(\sum_{\tau=k}^{T-1}\alpha^{\tau-k} r(x_\tau,u_\tau)\)'
+      - '\(r(x_k,u_k)+\alpha V_w(x_{k+1})-V_w(x_k)\)'
+      - '\(\max_v Q_w(x_{k+1},v)\)'
+      - '\(\sum_{\tau=0}^{T-1}\alpha^\tau r(x_\tau,u_\tau)\) for every \(k\)'
+    correct_choice: 0
+    explanation: 'REINFORCE uses reward-to-go from the current step onward, not a TD error and not the full-episode return repeated at every time step.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+      - reinforce
+  - id: lec13-reinforce-why-reward-to-go
+    prompt: 'Why does REINFORCE use the return from step \(k\) onward instead of including rewards collected before step \(k\) in the weight update at time \(k\)?'
+    choices:
+      - 'Because earlier rewards do not depend on the action \(u_k\), while the future return is the part that estimates \(Q_w(x_k,u_k)\)'
+      - 'Because earlier rewards are always zero under discounted problems'
+      - 'Because including earlier rewards would make the algorithm off-policy'
+      - 'Because the policy gradient theorem requires undiscounted returns'
+    correct_choice: 0
+    explanation: 'The update at time \(k\) is about how good action \(u_k\) was from that state onward. Rewards that were already determined before \(u_k\) cannot help estimate that action value.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+      - reinforce
+  - id: lec13-gaussian-mean-computation
+    prompt: 'If \(\phi(x)=(2,-1)\) and \(w=(3,1)\), what is the Gaussian-policy mean \(\mu_w(x)=\phi(x)^\top w\)?'
+    choices:
+      - '\(5\)'
+      - '\(1\)'
+      - '\(6\)'
+      - '\(-5\)'
+    correct_choice: 0
+    explanation: 'The inner product is \(2\cdot 3 + (-1)\cdot 1 = 5\). This is a straightforward computation question that still checks whether the policy parameterization is understood.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+      - computation
+  - id: lec13-single-episode-update
+    prompt: 'How does the lecture characterize the data usage pattern of plain REINFORCE?'
+    choices:
+      - 'It uses a single sampled episode as the estimate and then performs one sequence of policy updates based on that episode'
+      - 'It reuses a replay buffer of old episodes across many off-policy iterations'
+      - 'It alternates target-network copying with Bellman backups'
+      - 'It solves a constrained trust-region problem at each step'
+    correct_choice: 0
+    explanation: 'The slides present REINFORCE as a direct Monte Carlo method based on one episode at a time. The other options describe DQN-style replay or trust-region methods from later lectures.'
+    citation:
+      source_file: lecture-12-13.pdf
+      page: 1
+    tags:
+      - policy-gradient
+      - reinforce
+  - id: lec14-soft-policy-iteration-formula
+    prompt: 'Which update is the lecture''s tabular soft policy iteration step?'
+    choices:
+      - '\(\pi^{t+1}(u\mid x)\propto \exp(\beta Q^{\pi^t}(x,u))\)'
+      - '\(\pi^{t+1}(u\mid x)=\arg\max_u Q^{\pi^t}(x,u)\) only'
+      - '\(\pi^{t+1}(u\mid x)\propto Q^{\pi^t}(x,u)\)'
+      - '\(\pi^{t+1}(u\mid x)\propto \exp(-\beta V^{\pi^t}(x))\)'
+    correct_choice: 0
+    explanation: 'Soft policy iteration exponentiates action values into a Boltzmann policy. The hard argmax version is the zero-entropy limit, not the soft update itself.'
+    citation:
+      source_file: lecture-14.pdf
+      page: 1
+    tags:
+      - soft-policy-iteration
+      - natural-policy-gradient
+  - id: lec14-npg-entropy-equivalence
+    prompt: 'What conceptual equivalence does the lecture state between NPG with entropy regularization and another policy-improvement method in the tabular case?'
+    choices:
+      - 'NPG with entropy regularization is equivalent to soft policy iteration'
+      - 'NPG with entropy regularization is equivalent to double Q-learning'
+      - 'NPG with entropy regularization is equivalent to DPO'
+      - 'NPG with entropy regularization is equivalent to prioritized replay'
+    correct_choice: 0
+    explanation: 'The lecture explicitly connects entropy-regularized natural policy updates to soft policy iteration. That link is one of the conceptual payoffs of the geometry view.'
+    citation:
+      source_file: lecture-14.pdf
+      page: 1
+    tags:
+      - soft-policy-iteration
+      - natural-policy-gradient
+  - id: lec14-soft-to-hard-limit
+    prompt: 'According to the lecture, what happens to soft policy iteration as \(\tau \to 0\)?'
+    choices:
+      - 'It becomes ordinary policy iteration'
+      - 'It becomes REINFORCE'
+      - 'It becomes value iteration with \(\alpha=1\)'
+      - 'It becomes a zeroth-order method'
+    correct_choice: 0
+    explanation: 'The entropy regularization disappears in the zero-temperature limit, so the soft improvement step collapses to the ordinary hard-improvement policy-iteration step.'
+    citation:
+      source_file: lecture-14.pdf
+      page: 1
+    tags:
+      - soft-policy-iteration
+      - policy-iteration
+  - id: lec14-performance-difference-lemma
+    prompt: 'Assume two policies \(\pi_w\) and \(\pi_{\tilde w}\). What quantity appears inside the expectation in the lecture''s performance difference lemma?'
+    choices:
+      - '\(\sum_u \pi_{\tilde w}(u\mid x)\big(Q_w(x,u)-V_w(x)\big)\)'
+      - '\(\sum_u \pi_w(u\mid x)\big(Q_{\tilde w}(x,u)-V_{\tilde w}(x)\big)\)'
+      - '\(\sum_u \pi_{\tilde w}(u\mid x)\nabla_w \log \pi_w(u\mid x)\)'
+      - '\(\sum_u \pi_w(u\mid x)\mathrm{KL}(\pi_{\tilde w}\|\pi_w)\)'
+    correct_choice: 0
+    explanation: 'The exact lemma compares the new policy using the old policy''s advantage \(Q_w-V_w\). Swapping in the new policy''s value function or a score term changes the statement.'
+    citation:
+      source_file: lecture-14.pdf
+      page: 1
+    tags:
+      - performance-difference-lemma
+      - policy-gradient
+  - id: lec14-trpo-objective
+    prompt: 'Which optimization problem best matches TRPO in the lecture?'
+    choices:
+      - '\(\max_{\tilde w}\mathbb{E}_{x\sim \rho_w}\big[\sum_u \pi_{\tilde w}(u\mid x)A_w(x,u)\big]\) subject to \(\mathbb{E}_{x\sim \rho_w}[\mathrm{KL}(\pi_{\tilde w}\|\pi_w)]\le \epsilon\)'
+      - '\(\max_{\tilde w}\mathbb{E}_{x\sim \rho_{\tilde w}}\big[\sum_u \pi_w(u\mid x)A_w(x,u)\big]\) with no constraint'
+      - '\(\min_{\tilde w}\mathbb{E}_{x\sim \rho_w}\big[\sum_u \pi_{\tilde w}(u\mid x)Q_w(x,u)\big]\) subject to Bellman optimality'
+      - '\(\max_{\tilde w}\mathbb{E}_{x\sim \rho_w}[\mathrm{KL}(\pi_{\tilde w}\|\pi_w)]\)'
+    correct_choice: 0
+    explanation: 'TRPO uses a local surrogate built on the old-state distribution together with a KL trust-region constraint. The other options either drop the constraint or use the wrong distribution/objective pairing.'
+    citation:
+      source_file: lecture-14.pdf
+      page: 1
+    tags:
+      - trpo
+      - policy-gradient
+  - id: lec14-trpo-line-search
+    prompt: 'Why does the lecture say TRPO uses backtracking line search?'
+    choices:
+      - 'To choose a step size that satisfies the KL trust-region constraint after computing the natural-gradient direction'
+      - 'To estimate the Fisher matrix from scratch at every state'
+      - 'To replace the advantage function with Monte Carlo returns'
+      - 'To remove the need for the performance difference lemma'
+    correct_choice: 0
+    explanation: 'TRPO first gets a direction and then shrinks the step if needed to remain inside the trust region. The line search is about feasibility of the KL bound, not about redefining the objective.'
+    citation:
+      source_file: lecture-14.pdf
+      page: 1
+    tags:
+      - trpo
+      - policy-gradient
+  - id: lec14-trpo-monotonicity
+    prompt: 'What does the lecture''s TRPO monotonic improvement theorem guarantee?'
+    choices:
+      - '\(V_{w_{k+1}}(x_0)\ge V_{w_k}(x_0)\) with carefully chosen learning rates'
+      - '\(V_{w_{k+1}}(x_0)=V^*(x_0)\) after one update'
+      - '\(\mathrm{KL}(\pi_{w_{k+1}}\|\pi_{w_k})=0\) at every step'
+      - 'The Fisher matrix becomes diagonal after enough iterations'
+    correct_choice: 0
+    explanation: 'The theorem gives monotonic improvement, not one-step optimality or zero policy change. It is a controlled-improvement statement under the trust-region machinery.'
+    citation:
+      source_file: lecture-14.pdf
+      page: 1
+    tags:
+      - trpo
+      - policy-gradient
+  - id: lec14-ppo-penalty-adjustment
+    prompt: 'In PPO-Penalty, how is the penalty coefficient \(\beta\) adjusted according to the lecture?'
+    choices:
+      - 'If the measured KL is too small, decrease \(\beta\); if it is too large, increase \(\beta\)'
+      - 'If the measured KL is too small, increase \(\beta\); if it is too large, decrease \(\beta\)'
+      - 'Always halve \(\beta\) after every epoch'
+      - 'Keep \(\beta\) fixed because PPO avoids KL control entirely'
+    correct_choice: 0
+    explanation: 'A small realized KL means the penalty is too strong, so the lecture decreases \(\beta\); an overly large KL means the penalty is too weak, so it increases \(\beta\).'
+    citation:
+      source_file: lecture-14.pdf
+      page: 1
+    tags:
+      - ppo
+      - policy-gradient
+  - id: lec14-ppo-clip-purpose
+    prompt: 'Why does PPO-Clip use both clipping and a \(\min\) between the unclipped and clipped objectives?'
+    choices:
+      - 'To keep the policy from moving too far from the old one and to use a conservative surrogate when the change would otherwise look too favorable'
+      - 'To make the policy deterministic whenever the advantage is positive'
+      - 'To remove the need for sampling trajectories'
+      - 'To turn PPO into exact TRPO with no approximation'
+    correct_choice: 0
+    explanation: 'The clip limits the ratio, and the \(\min\) keeps the objective conservative when the unclipped term would over-reward an overly large policy change. That pair is the whole trick.'
+    citation:
+      source_file: lecture-14.pdf
+      page: 1
+    tags:
+      - ppo
+      - policy-gradient
+  - id: lec14-ppo-clip-computation
+    prompt: 'In PPO-Clip, suppose \(A(x,u)=2\), \(\epsilon=\tfrac{1}{5}\), and the policy ratio is \(r=\frac{\pi_{\tilde w}(u\mid x)}{\pi_w(u\mid x)}=\tfrac{3}{2}\). What clipped surrogate term is used inside \(\min(rA,\mathrm{clip}(r,1-\epsilon,1+\epsilon)A)\)?'
+    choices:
+      - '\(\tfrac{12}{5}\)'
+      - '\(3\)'
+      - '\(\tfrac{8}{5}\)'
+      - '\(\tfrac{2}{5}\)'
+    correct_choice: 0
+    explanation: 'Here \(1+\epsilon=\tfrac{6}{5}\), so the clipped term is \(\tfrac{6}{5}\cdot 2=\tfrac{12}{5}\), while the unclipped term is \(\tfrac{3}{2}\cdot 2=3\). PPO uses the smaller of those two expressions.'
+    citation:
+      source_file: lecture-14.pdf
+      page: 1
+    tags:
+      - ppo
+      - computation
+  - id: lec5-q-learning-formula-id
+    prompt: 'Which algorithm uses the update \(\tilde Q(i,u)\leftarrow (1-\beta_k)\tilde Q(i,u)+\beta_k\big(r(i,u)+\alpha\max_v \tilde Q(j,v)\big)\)?'
+    choices:
+      - 'Q-learning'
+      - 'SARSA'
+      - 'Value iteration'
+      - 'Policy iteration'
+    correct_choice: 0
+    explanation: 'That target uses a max over next-state actions, which is the hallmark of Q-learning. SARSA instead bootstraps from the action that is actually selected next.'
+    citation:
+      source_file: lecture-05.pdf
+      page: 1
+    tags:
+      - q-learning
+  - id: lec5-q-learning-max-role
+    prompt: 'In the Q-learning target \(r(i,u)+\alpha\max_v \tilde Q(j,v)\), what role does the term \(\max_v \tilde Q(j,v)\) play?'
+    choices:
+      - 'It bootstraps toward the greedy next-state value, regardless of which action the behavior policy actually takes next'
+      - 'It averages over all next actions under the current behavior policy'
+      - 'It estimates the stationary distribution of the next state'
+      - 'It forces the update to be on-policy'
+    correct_choice: 0
+    explanation: 'Q-learning uses the greedy target, not the next action actually sampled. That is why it is off-policy in the lecture''s discussion.'
+    citation:
+      source_file: lecture-05.pdf
+      page: 1
+    tags:
+      - q-learning
+      - off-policy
+  - id: lec5-q-learning-computation
+    prompt: 'Suppose the current estimate is \(\tilde Q(i,u)=0\), the observed reward is \(r(i,u)=1\), the next-state action values are \(\tilde Q(j,a)=2\) and \(\tilde Q(j,b)=0\), \(\alpha=\tfrac12\), and \(\beta_k=\tfrac12\). After one Q-learning update, what is the new value of \(\tilde Q(i,u)\)?'
+    choices:
+      - '\(1\)'
+      - '\(\tfrac12\)'
+      - '\(\tfrac32\)'
+      - '\(2\)'
+    correct_choice: 0
+    explanation: 'The target is \(1+\tfrac12\max\{2,0\}=2\), so the update gives \(0+\tfrac12(2-0)=1\). This checks the structure of the Q-learning backup, not just arithmetic.'
+    citation:
+      source_file: lecture-05.pdf
+      page: 1
+    tags:
+      - q-learning
+      - computation
+  - id: lec5-sarsa-formula-id
+    prompt: 'Which algorithm uses the update \(\tilde Q(x_{k-1},u_{k-1})\leftarrow (1-\beta_k)\tilde Q(x_{k-1},u_{k-1})+\beta_k\big(r(x_{k-1},u_{k-1})+\alpha \tilde Q(x_k,u_k)\big)\)?'
+    choices:
+      - 'SARSA'
+      - 'Q-learning'
+      - 'Value iteration'
+      - 'Double DQN'
+    correct_choice: 0
+    explanation: 'SARSA bootstraps from the state-action pair that actually appears next in the sample trajectory. Replacing \(\tilde Q(x_k,u_k)\) with a max over actions would turn it into the Q-learning form.'
+    citation:
+      source_file: lecture-05.pdf
+      page: 1
+    tags:
+      - sarsa
+  - id: lec5-sarsa-target-family
+    prompt: 'Which target belongs to the SARSA update rule?'
+    choices:
+      - '\(r(x_{k-1},u_{k-1})+\alpha \tilde Q(x_k,u_k)\)'
+      - '\(r(x_{k-1},u_{k-1})+\alpha \max_v \tilde Q(x_k,v)\)'
+      - '\(\max_u \big(\bar r(i,u)+\alpha\sum_j P_{ij}(u)V(j)\big)\)'
+      - '\(r(x_k,u_k)+\alpha \tilde Q(x_{k-1},u_{k-1})\)'
+    correct_choice: 0
+    explanation: 'SARSA uses the sampled next action \(u_k\) inside the target. The Q-learning target is a close same-family distractor because it differs only in whether the next action is sampled or maximized.'
+    citation:
+      source_file: lecture-05.pdf
+      page: 1
+    tags:
+      - sarsa
+  - id: lec5-sarsa-computation
+    prompt: 'Using the SARSA update \(\tilde Q\leftarrow \tilde Q+\beta_k[r+\alpha \tilde Q^\prime-\tilde Q]\), suppose \(\tilde Q(x_{k-1},u_{k-1})=\tfrac12\), the observed reward is \(0\), the next chosen action has \(\tilde Q(x_k,u_k)=\tfrac14\), \(\alpha=1\), and \(\beta_k=\tfrac12\). What is the updated value of \(\tilde Q(x_{k-1},u_{k-1})\)?'
+    choices:
+      - '\(\tfrac{3}{8}\)'
+      - '\(\tfrac{1}{4}\)'
+      - '\(\tfrac{1}{2}\)'
+      - '\(\tfrac{5}{8}\)'
+    correct_choice: 0
+    explanation: 'The SARSA target is \(0+1\cdot \tfrac14=\tfrac14\), so the update is \(\tfrac12+\tfrac12(\tfrac14-\tfrac12)=\tfrac12-\tfrac18=\tfrac38\). This checks that SARSA uses the chosen next action inside the TD target.'
+    citation:
+      source_file: lecture-05.pdf
+      page: 1
+    tags:
+      - sarsa
+      - computation
+  - id: lec5-boltzmann-limit
+    prompt: 'Under Boltzmann exploration, what happens to the policy as the temperature \(T\to 0\)?'
+    choices:
+      - 'It concentrates on actions in \(\arg\max_u Q_k(x_k,u)\)'
+      - 'It becomes uniform over the action set'
+      - 'It matches the stationary distribution over states'
+      - 'It becomes identical to the target network'
+    correct_choice: 0
+    explanation: 'As \(T\) becomes small, the exponential weighting increasingly favors the highest-Q action. The lecture uses this as the bridge from soft randomized choice to greedy choice.'
+    citation:
+      source_file: lecture-05.pdf
+      page: 1
+    tags:
+      - exploration
+      - sarsa
+  - id: lec5-on-vs-off-policy-pairing
+    prompt: 'Which target-policy / behavior-policy pairing matches the lecture''s comparison between Q-learning and SARSA?'
+    choices:
+      - 'Q-learning: target policy is optimal and behavior can be any sufficiently exploratory policy; SARSA: target and behavior are both \(\epsilon\)-greedy'
+      - 'Q-learning: target and behavior are both \(\epsilon\)-greedy; SARSA: target policy is optimal and behavior can be arbitrary'
+      - 'Q-learning: both target and behavior are deterministic greedy; SARSA: both target and behavior are uniform random'
+      - 'Q-learning: target is Boltzmann and behavior is target-network based; SARSA: target is value iteration and behavior is policy iteration'
+    correct_choice: 0
+    explanation: 'The lecture''s distinction is exactly off-policy versus on-policy: Q-learning learns a greedy target while SARSA learns the value of the exploratory policy it is actually following.'
+    citation:
+      source_file: lecture-05.pdf
+      page: 1
+    tags:
+      - q-learning
+      - sarsa
+      - off-policy
+      - on-policy
+  - id: lec5-q-function-to-policy
+    prompt: 'Once the optimal action-value function \(Q(i,u)\) is known, how does the lecture recover an optimal policy?'
+    choices:
+      - 'Choose an action in \(\arg\max_u Q(i,u)\) at each state'
+      - 'Choose an action in \(\arg\min_u Q(i,u)\) at each state'
+      - 'Average \(Q(i,u)\) over actions and ignore the maximizing action'
+      - 'Follow the behavior policy that generated the samples'
+    correct_choice: 0
+    explanation: 'The lecture emphasizes that knowing \(Q\) is enough because the optimal control action is the maximizer of the action value. The behavior policy used during learning is a separate issue.'
+    citation:
+      source_file: lecture-05.pdf
+      page: 1
+    tags:
+      - q-learning
+  - id: lec5-sarsa-epsilon-decay
+    prompt: 'Why does the lecture require \(\epsilon_k\to 0\) in the SARSA exploration schedule?'
+    choices:
+      - 'So the behavior policy becomes increasingly greedy while still allowing exploration during learning'
+      - 'So the Bellman equation becomes linear in \(Q\)'
+      - 'So the next state becomes deterministic in the limit'
+      - 'So the update becomes off-policy'
+    correct_choice: 0
+    explanation: 'The idea is to keep exploring long enough to learn while gradually reducing the exploration bias in the learned control policy. It does not change the Bellman equation or make the method off-policy.'
+    citation:
+      source_file: lecture-05.pdf
+      page: 1
+    tags:
+      - sarsa
+      - exploration
+  - id: lec6-fixed-policy-bellman-equation
+    prompt: 'For a fixed stationary policy \(\mu\), which Bellman equation does the lecture derive for \(V_\mu\)?'
+    choices:
+      - '\(V_\mu(i)=\bar r(i,\mu(i))+\alpha\sum_j P_{ij}(\mu(i))V_\mu(j)\)'
+      - '\(V_\mu(i)=\max_u \left(\bar r(i,u)+\alpha\sum_j P_{ij}(u)V_\mu(j)\right)\)'
+      - '\(V_\mu(i)=\sum_u \pi(u\mid i)Q_\mu(i,u)-V_\mu(i)\)'
+      - '\(V_\mu(i)=\nabla_w \log \pi_w(u\mid i)\)'
+    correct_choice: 0
+    explanation: 'For a fixed policy, the action is already specified as \(\mu(i)\), so no maximization remains. The max-over-actions form is the control equation, not the evaluation equation.'
+    citation:
+      source_file: lecture-06.pdf
+      page: 1
+    tags:
+      - contraction-mapping
+      - policy-evaluation
+  - id: lec6-well-defined-value
+    prompt: 'Why does the lecture say \(V_\mu(i)\) is well-defined in the discounted infinite-horizon setting?'
+    choices:
+      - 'The partial sums form an increasing, upper-bounded sequence, so the limit exists'
+      - 'The rewards are assumed to be exactly periodic'
+      - 'The transition matrix under \(\mu\) must be symmetric'
+      - 'Every trajectory reaches a terminal state in finitely many steps'
+    correct_choice: 0
+    explanation: 'Bounded rewards together with discounting keep the cumulative return under control. The lecture packages that into the monotone bounded-sequence argument for the partial sums.'
+    citation:
+      source_file: lecture-06.pdf
+      page: 1
+    tags:
+      - contraction-mapping
+      - policy-evaluation
+  - id: lec6-contraction-theorem-conclusion
+    prompt: 'Assume \(T\) is a contraction on \(\mathbb{R}^S\) with modulus \(\alpha\in[0,1)\). What conclusion does the contraction mapping theorem give?'
+    choices:
+      - 'There is a unique fixed point \(x^*\), and the iteration \(x_{k+1}=T(x_k)\) converges to it from any initial \(x_0\)'
+      - 'There may be many fixed points, but all have the same norm'
+      - 'The iterates converge only if \(x_0=0\)'
+      - 'Every fixed point must also maximize a Bellman equation'
+    correct_choice: 0
+    explanation: 'The theorem gives both uniqueness and global convergence of the fixed-point iteration. The other statements either weaken the theorem incorrectly or smuggle in Bellman-specific content that the theorem itself does not require.'
+    citation:
+      source_file: lecture-06.pdf
+      page: 1
+    tags:
+      - contraction-mapping
+  - id: lec6-uniqueness-proof-line
+    prompt: 'Which line is the key fixed-point uniqueness step in the contraction mapping proof?'
+    choices:
+      - '\(\|y^*-x^*\|=\|T(y^*)-T(x^*)\|\le \alpha \|y^*-x^*\|\)'
+      - '\(\|y^*-x^*\|\ge \|T(y^*)-T(x^*)\|+\alpha\)'
+      - '\(\|y^*-x^*\|=\alpha+\|T(y^*)\|+\|T(x^*)\|\)'
+      - '\(\|y^*-x^*\|=\|T^2(y^*)-T^2(x^*)\|/\alpha^2\) only if \(\alpha=0\)'
+    correct_choice: 0
+    explanation: 'Once both points are assumed fixed, contraction forces their distance to be at most \(\alpha\) times itself. Since \(\alpha<1\), the only possibility is zero distance.'
+    citation:
+      source_file: lecture-06.pdf
+      page: 1
+    tags:
+      - contraction-mapping
+  - id: lec6-fixed-policy-operator
+    prompt: 'Which operator does the lecture define to prove uniqueness of the fixed-policy value function?'
+    choices:
+      - '\(T_\mu(V)=\bar r_\mu+\alpha P_\mu V\)'
+      - '\(T(V)=\max_u (\bar r_u+\alpha P_u V)\)'
+      - '\(T(Q)=Q+\beta(r+\alpha \max Q-Q)\)'
+      - '\(T(w)=w+\beta \delta(w)\phi\)'
+    correct_choice: 0
+    explanation: 'For a fixed policy, the Bellman operator is affine: reward vector plus discounted transition matrix times the value vector. The max operator and stochastic-approximation updates belong to other algorithms.'
+    citation:
+      source_file: lecture-06.pdf
+      page: 1
+    tags:
+      - contraction-mapping
+      - policy-evaluation
+  - id: lec6-why-supnorm-contraction
+    prompt: 'Why does the proof conclude \(\|T_\mu(x)-T_\mu(y)\|_\infty \le \alpha\|x-y\|_\infty\)?'
+    choices:
+      - 'Because each row of the transition matrix sums to 1, so \(P_\mu\) cannot amplify the sup norm beyond its largest component'
+      - 'Because rewards are deterministic under every policy'
+      - 'Because \(\mu\) is an optimal policy'
+      - 'Because \(P_\mu\) is always diagonal'
+    correct_choice: 0
+    explanation: 'The row-stochastic structure of \(P_\mu\) is what makes the weighted sum of components stay within the sup-norm envelope. Optimality or diagonal structure is not needed.'
+    citation:
+      source_file: lecture-06.pdf
+      page: 1
+    tags:
+      - contraction-mapping
+  - id: lec6-contraction-bound-computation
+    prompt: 'If \(T\) is a \(\tfrac13\)-contraction and \(\|x-y\|_\infty=6\), what upper bound does the theorem give on \(\|T(x)-T(y)\|_\infty\)?'
+    choices:
+      - '\(2\)'
+      - '\(3\)'
+      - '\(6\)'
+      - '\(18\)'
+    correct_choice: 0
+    explanation: 'The contraction bound gives \(\|T(x)-T(y)\|_\infty\le \tfrac13 \cdot 6 = 2\). This is an easy computation, but the point is understanding what the modulus controls.'
+    citation:
+      source_file: lecture-06.pdf
+      page: 1
+    tags:
+      - contraction-mapping
+      - computation
+  - id: lec6-cauchy-sequence-role
+    prompt: 'In the convergence proof, why is showing \((x_n)\) is a Cauchy sequence important?'
+    choices:
+      - 'Because completeness of the space then guarantees the iterates converge to some limit \(x^*\) in the same space'
+      - 'Because every Cauchy sequence is eventually constant'
+      - 'Because it proves the fixed point is optimal for all control problems'
+      - 'Because it removes the need to use the contraction property again'
+    correct_choice: 0
+    explanation: 'The Cauchy argument produces existence of a candidate limit point. Completeness is the structural assumption that keeps that limit inside the space where the operator lives.'
+    citation:
+      source_file: lecture-06.pdf
+      page: 1
+    tags:
+      - contraction-mapping
+  - id: lec6-fixed-point-step
+    prompt: 'After obtaining \(x_n\to x^*\), why can the proof conclude \(T(x^*)=x^*\)?'
+    choices:
+      - 'Because a contraction is Lipschitz, hence continuous, so \(T(x_n)\to T(x^*)\) while \(T(x_n)=x_{n+1}\to x^*\)'
+      - 'Because every limit point of an iterative method is automatically a fixed point'
+      - 'Because \(x^*\) must maximize the Bellman operator'
+      - 'Because \(x_n\) is monotone increasing entry-wise'
+    correct_choice: 0
+    explanation: 'Continuity of \(T\) is the bridge from convergence of the iterates to the fixed-point identity. A generic iterative sequence need not converge to a fixed point without that structure.'
+    citation:
+      source_file: lecture-06.pdf
+      page: 1
+    tags:
+      - contraction-mapping
+  - id: lec6-unique-value-function-conclusion
+    prompt: 'Suppose \(V\) satisfies \(V=T_\mu(V)\) for the fixed-policy Bellman operator \(T_\mu\). What does the lecture conclude?'
+    choices:
+      - 'It must equal the unique value function \(V_\mu\) of policy \(\mu\)'
+      - 'It is one of many possible value functions that share the same reward'
+      - 'It must also solve the optimal Bellman equation'
+      - 'It must be zero whenever the rewards are bounded'
+    correct_choice: 0
+    explanation: 'The contraction argument gives uniqueness of the fixed point of \(T_\mu\). So any solution of the Bellman equation for that policy has to be the policy''s actual value function.'
+    citation:
+      source_file: lecture-06.pdf
+      page: 1
+    tags:
+      - contraction-mapping
+      - policy-evaluation
+  - id: lec7-value-iteration-operator
+    prompt: 'Which operator defines value iteration in the lecture?'
+    choices:
+      - '\(T(V)(i)=\max_u \left(\mathbb{E}[r(i,u)]+\alpha\sum_j P_{ij}(u)V(j)\right)\)'
+      - '\(T_\mu(V)(i)=\bar r(i,\mu(i))+\alpha\sum_j P_{ij}(\mu(i))V(j)\)'
+      - '\(T(Q)(i,u)=Q(i,u)+\beta\big(r(i,u)+\alpha\max_v Q(j,v)-Q(i,u)\big)\)'
+      - '\(T(w)=w+\beta\,\delta(w)\phi(i,u)\)'
+    correct_choice: 0
+    explanation: 'Value iteration repeatedly applies the optimal Bellman operator. The fixed-policy operator and stochastic-approximation updates belong to different algorithms.'
+    citation:
+      source_file: lecture-07-08.pdf
+      page: 1
+    tags:
+      - value-iteration
+  - id: lec7-bellman-equation-for-vstar
+    prompt: 'What Bellman equation does Theorem 1 state for \(V^*\)?'
+    choices:
+      - '\(V^*(i)=\max_u \left(\mathbb{E}[r(i,u)]+\alpha\sum_j P_{ij}(u)V^*(j)\right)\)'
+      - '\(V^*(i)=\bar r(i,\mu(i))+\alpha\sum_j P_{ij}(\mu(i))V^*(j)\) for a fixed \(\mu\)'
+      - '\(V^*(i)=\sum_u \pi(u\mid i)Q^*(i,u)\)'
+      - '\(V^*(i)=\nabla_w \log \pi_w(u\mid i)\)'
+    correct_choice: 0
+    explanation: 'The optimal Bellman equation takes a maximum over current actions. The fixed-policy equation is a close same-family distractor because it drops exactly that optimization step.'
+    citation:
+      source_file: lecture-07-08.pdf
+      page: 1
+    tags:
+      - value-iteration
+  - id: lec7-monotonicity-fact
+    prompt: 'Which fact about the value-iteration operator \(T\) is used in the lecture''s contraction proof?'
+    choices:
+      - 'If \(V_1\le V_2\) entry-wise, then \(T(V_1)\le T(V_2)\)'
+      - 'If \(V_1\le V_2\), then \(T(V_1)\ge T(V_2)\)'
+      - 'If \(V_1=V_2+\gamma e\), then \(T(V_1)=T(V_2)\)'
+      - 'If \(V_1\le V_2\), then \(T(V_1)-T(V_2)\) is orthogonal to every feature'
+    correct_choice: 0
+    explanation: 'Monotonicity is one of the two simple facts the lecture isolates before proving contraction. It lets the proof compare \(T(V_1)\) to shifted versions of \(T(V_2)\).'
+    citation:
+      source_file: lecture-07-08.pdf
+      page: 1
+    tags:
+      - value-iteration
+  - id: lec7-translation-fact
+    prompt: 'Which shift identity is used in the contraction proof for value iteration?'
+    choices:
+      - '\(T(V+\gamma e)=T(V)+\alpha\gamma e\)'
+      - '\(T(V+\gamma e)=T(V)+\gamma e\)'
+      - '\(T(V+\gamma e)=\alpha T(V)+\gamma e\)'
+      - '\(T(V+\gamma e)=T(V)-\alpha\gamma e\)'
+    correct_choice: 0
+    explanation: 'Because future values are discounted by \(\alpha\), shifting all components of \(V\) by \(\gamma\) shifts the Bellman backup by \(\alpha\gamma\), not by \(\gamma\).'
+    citation:
+      source_file: lecture-07-08.pdf
+      page: 1
+    tags:
+      - value-iteration
+  - id: lec7-why-contraction
+    prompt: 'Why do the monotonicity fact and the shift identity together imply \(\|T(V_1)-T(V_2)\|_\infty \le \alpha \|V_1-V_2\|_\infty\)?'
+    choices:
+      - 'They let the proof sandwich \(V_1\) between \(V_2-be\) and \(V_2+be\), then propagate that sandwich through \(T\)'
+      - 'They show the rewards are deterministic and therefore exact'
+      - 'They imply \(T\) is linear in \(V\)'
+      - 'They prove the maximizing action is unique at every state'
+    correct_choice: 0
+    explanation: 'The proof sets \(b=\|V_1-V_2\|_\infty\), then compares \(T(V_1)\) to the shifted bounds on \(T(V_2)\). That is the mechanism behind the contraction estimate.'
+    citation:
+      source_file: lecture-07-08.pdf
+      page: 1
+    tags:
+      - value-iteration
+  - id: lec7-one-step-backup-computation
+    prompt: 'Suppose one state has two actions with values \(\mathbb{E}[r(i,a)]+\alpha\sum_j P_{ij}(a)V(j)=3\) and \(\mathbb{E}[r(i,b)]+\alpha\sum_j P_{ij}(b)V(j)=2\). What is \(T(V)(i)\)?'
+    choices:
+      - '\(3\)'
+      - '\(2\)'
+      - '\(\tfrac52\)'
+      - '\(5\)'
+    correct_choice: 0
+    explanation: 'The optimal Bellman operator takes a maximum over actions, so it returns the larger backed-up value. This is a tiny computation whose real purpose is checking the operator definition.'
+    citation:
+      source_file: lecture-07-08.pdf
+      page: 1
+    tags:
+      - value-iteration
+      - computation
+  - id: lec7-optimal-policy-from-vstar
+    prompt: 'Assume \(V^*=T(V^*)\). Which policy does Theorem 3 identify as optimal?'
+    choices:
+      - 'Any stationary policy \(\mu^*\) satisfying \(\mu^*(i)\in \arg\max_u \left(\mathbb{E}[r(i,u)]+\alpha\sum_j P_{ij}(u)V^*(j)\right)\)'
+      - 'Only the policy that generated the initial iterate \(V_0\)'
+      - 'Any policy whose state values are all equal'
+      - 'Only stochastic Boltzmann policies with positive temperature'
+    correct_choice: 0
+    explanation: 'The theorem builds an optimal policy by choosing, state by state, an action that attains the Bellman maximum. Nothing about the construction depends on the initial iterate.'
+    citation:
+      source_file: lecture-07-08.pdf
+      page: 1
+    tags:
+      - value-iteration
+      - policy-iteration
+  - id: lec7-global-convergence
+    prompt: 'Why does the lecture conclude that \(V_{k+1}=T(V_k)\) converges to \(V^*\) from any initial \(V_0\)?'
+    choices:
+      - 'Because \(T\) is a contraction and \(V^*\) is its unique fixed point'
+      - 'Because \(T\) is linear and diagonalizable'
+      - 'Because the maximizing action is unique at every state'
+      - 'Because every MDP has a unique stationary distribution'
+    correct_choice: 0
+    explanation: 'The contraction mapping theorem is doing the heavy lifting here: once the operator is shown to contract, both uniqueness and convergence of the iteration follow automatically.'
+    citation:
+      source_file: lecture-07-08.pdf
+      page: 1
+    tags:
+      - value-iteration
+      - contraction-mapping
+  - id: lec7-why-stationary-policy-suffices
+    prompt: 'Why can the lecture recover an optimal stationary policy from \(V^*\) without searching over general history-dependent policies?'
+    choices:
+      - 'Because the Bellman equation reduces the decision at each state to a statewise maximization using \(V^*\)'
+      - 'Because history-dependent policies are never allowed in discounted MDPs'
+      - 'Because stationarity forces the transition matrix to be symmetric'
+      - 'Because the value iteration proof assumes deterministic rewards only'
+    correct_choice: 0
+    explanation: 'The Bellman equation collapses the control problem to one-step choices conditioned on the current state. That is what makes a statewise stationary argmax policy sufficient.'
+    citation:
+      source_file: lecture-07-08.pdf
+      page: 1
+    tags:
+      - value-iteration
+  - id: lec7-essential-assumption
+    prompt: 'Which assumption is essential for the lecture''s contraction-based proof of value-iteration convergence?'
+    choices:
+      - '\(\alpha\in[0,1)\)'
+      - 'Every maximizing action is unique'
+      - 'The optimal policy is stochastic'
+      - 'The rewards are deterministic'
+    correct_choice: 0
+    explanation: 'The discount factor being strictly below 1 is what gives the contraction modulus. Uniqueness of maximizers or deterministic rewards are not needed for the contraction argument.'
+    citation:
+      source_file: lecture-07-08.pdf
+      page: 1
+    tags:
+      - value-iteration
+      - contraction-mapping
+  - id: lec8-proof-simplification
+    prompt: 'What simplification does the lecture make when proving Q-learning convergence?'
+    choices:
+      - 'It studies a modified algorithm that uses \(N\) experiences at each iteration'
+      - 'It replaces the max in Q-learning with a softmax'
+      - 'It assumes the transition model is known exactly'
+      - 'It requires the policy to remain on-policy throughout the proof'
+    correct_choice: 0
+    explanation: 'The lecture introduces a batched variant with \(N\) samples per iteration to make the pseudo-contraction argument cleaner. It is presented as an approximation to ordinary Q-learning when the learning rate is small.'
+    citation:
+      source_file: lecture-08.pdf
+      page: 1
+    tags:
+      - q-learning
+      - convergence
+  - id: lec8-gamma-meaning
+    prompt: 'In the modified Q-learning proof, what does \(\gamma_{i,u}\) denote?'
+    choices:
+      - 'The fraction of sampled experiences whose current state-action pair is \((i,u)\)'
+      - 'The discount factor multiplying future rewards'
+      - 'The stationary probability of being in state \(i\) under the optimal policy'
+      - 'The learning rate used only for action \(u\)'
+    correct_choice: 0
+    explanation: 'The proof uses \(\gamma_{i,u}\) to keep track of how often each state-action pair appears in the batch. It is not the discount factor, even though the symbol is visually similar to \(\gamma\) in other contexts.'
+    citation:
+      source_file: lecture-08.pdf
+      page: 1
+    tags:
+      - q-learning
+      - convergence
+  - id: lec8-empirical-transition-fraction
+    prompt: 'In the convergence proof, what does \(\hat p_{ij}(u)\) represent?'
+    choices:
+      - 'The empirical fraction of times the next state is \(j\) among sampled experiences whose current pair is \((i,u)\)'
+      - 'The exact transition probability under the model'
+      - 'The probability of choosing action \(u\) at state \(i\)'
+      - 'The probability that the value iteration operator selects state \(j\)'
+    correct_choice: 0
+    explanation: 'The hat indicates an empirical quantity computed from the current batch of experiences. The true model probabilities \(p_{ij}(u)\) appear separately in the comparison to \(Q^*\).'
+    citation:
+      source_file: lecture-08.pdf
+      page: 1
+    tags:
+      - q-learning
+      - convergence
+  - id: lec8-noise-term-mean
+    prompt: 'Why does the proof conclude \(\mathbb{E}[W_k\mid Q_k]=0\) for the noise term \(W_k\)?'
+    choices:
+      - 'Because \(\mathbb{E}[\hat p_{ij}(u)]=p_{ij}(u)\), so the empirical-transition error has zero conditional mean'
+      - 'Because \(Q_k=Q^*\) at every step of the proof'
+      - 'Because the rewards are all zero in every MDP'
+      - 'Because the maximization error vanishes exactly for finite \(N\)'
+    correct_choice: 0
+    explanation: 'The stochastic term comes from replacing the true transition probabilities with empirical fractions. Its conditional mean is zero because those empirical fractions are unbiased for the true probabilities.'
+    citation:
+      source_file: lecture-08.pdf
+      page: 1
+    tags:
+      - q-learning
+      - convergence
+  - id: lec8-max-difference-inequality
+    prompt: 'Which inequality does the lecture use to control the nonlinear max term in the convergence proof?'
+    choices:
+      - '\(\left|\max_v Q_k(j,v)-\max_v Q^*(j,v)\right| \le \max_v \left|Q_k(j,v)-Q^*(j,v)\right|\)'
+      - '\(\max_v \left|Q_k(j,v)-Q^*(j,v)\right| \le \left|\max_v Q_k(j,v)-\max_v Q^*(j,v)\right|\)'
+      - '\(\left|\max_v Q_k(j,v)-\max_v Q^*(j,v)\right| = \sum_v \left|Q_k(j,v)-Q^*(j,v)\right|\)'
+      - '\(\max_v Q_k(j,v)-\max_v Q^*(j,v)=0\) whenever \(j\) is fixed'
+    correct_choice: 0
+    explanation: 'The max operator is not linear, so the proof needs a clean comparison inequality. The lecture uses the fact that the difference between two maxima is controlled by the largest pointwise difference.'
+    citation:
+      source_file: lecture-08.pdf
+      page: 1
+    tags:
+      - q-learning
+      - convergence
+  - id: lec8-rho-computation
+    prompt: 'If \(\alpha=\tfrac12\) and \(\beta=\tfrac14\), what value does the proof''s contraction factor \(\rho=(1-\beta+\alpha\beta)^2\) take?'
+    choices:
+      - '\(\tfrac{49}{64}\)'
+      - '\(\tfrac{9}{16}\)'
+      - '\(\tfrac{7}{8}\)'
+      - '\(\tfrac{1}{4}\)'
+    correct_choice: 0
+    explanation: 'Here \(1-\beta+\alpha\beta = 1-\tfrac14+\tfrac18 = \tfrac78\), so \(\rho=(\tfrac78)^2=\tfrac{49}{64}\). The proof then uses \(\rho<1\) to get geometric decay plus noise.'
+    citation:
+      source_file: lecture-08.pdf
+      page: 1
+    tags:
+      - q-learning
+      - convergence
+      - computation
+  - id: lec8-noise-floor-scaling
+    prompt: 'In the bound \(\mathbb{E}\|Q_{k+1}-Q^*\|_\infty^2 \le \rho\,\mathbb{E}\|Q_k-Q^*\|_\infty^2 + \frac{c\beta^2\log^2 N}{N}\), what happens to the additive error term as \(N\) grows?'
+    choices:
+      - 'It shrinks, reflecting that larger batches reduce the sampling noise in the pseudo-contraction bound'
+      - 'It grows linearly with \(N\), reflecting more transitions'
+      - 'It stays exactly constant because the max operator dominates'
+      - 'It vanishes only if \(\alpha=0\)'
+    correct_choice: 0
+    explanation: 'The additive term is the price of using empirical transitions. Larger batches make those empirical fractions more accurate, so the residual noise level in the bound gets smaller.'
+    citation:
+      source_file: lecture-08.pdf
+      page: 1
+    tags:
+      - q-learning
+      - convergence
+  - id: lec8-pseudo-contraction-meaning
+    prompt: 'Why does the lecture call the Q-learning argument a "pseudo contraction mapping" rather than an exact contraction mapping?'
+    choices:
+      - 'Because the expected squared error contracts only up to an additional sampling-noise term'
+      - 'Because the update is exactly a contraction only when \(\alpha=1\)'
+      - 'Because the operator has many fixed points but the proof chooses one'
+      - 'Because the proof is carried out in the \(\ell_1\) norm instead of the sup norm'
+    correct_choice: 0
+    explanation: 'Unlike the clean Bellman-operator contraction proofs, the stochastic update has an extra noisy remainder term. So the recurrence is contraction-like, but not a noiseless contraction identity.'
+    citation:
+      source_file: lecture-08.pdf
+      page: 1
+    tags:
+      - q-learning
+      - convergence
+  - id: lec8-deterministic-reward-role
+    prompt: 'What is the role of the assumption that \(r(i,u)\) is deterministic in the lecture''s modified proof?'
+    choices:
+      - 'It removes one source of randomness so the stochastic term comes only from empirical next-state sampling'
+      - 'It makes the optimal policy deterministic automatically'
+      - 'It implies \(\hat p_{ij}(u)=p_{ij}(u)\) exactly for finite \(N\)'
+      - 'It makes the Q-learning update on-policy'
+    correct_choice: 0
+    explanation: 'The proof isolates the effect of transition-sampling noise. Deterministic rewards simplify the algebra by preventing an extra reward-noise term from appearing in the bound.'
+    citation:
+      source_file: lecture-08.pdf
+      page: 1
+    tags:
+      - q-learning
+      - convergence
+  - id: lec8-batch-approximation-remark
+    prompt: 'Why does the lecture say the modified batched algorithm approximates ordinary Q-learning when \(\beta\) is small?'
+    choices:
+      - 'Because over \(N\) ordinary updates with small \(\beta\), the Q-values change little, making the batch average behave similarly to the sequential updates'
+      - 'Because small \(\beta\) makes the max operator linear'
+      - 'Because small \(\beta\) forces \(\hat p_{ij}(u)=p_{ij}(u)\)'
+      - 'Because small \(\beta\) makes exploration unnecessary'
+    correct_choice: 0
+    explanation: 'The remark is an approximation argument, not a new convergence theorem for exact equality. Small steps keep the Q-values nearly frozen over the mini-batch, which is why the two views line up.'
+    citation:
+      source_file: lecture-08.pdf
+      page: 1
+    tags:
+      - q-learning
+      - convergence
+  - id: lec9-linear-q-form
+    prompt: 'Which expression is the lecture''s linear function approximation model for \(Q(i,u)\)?'
+    choices:
+      - '\(Q(i,u)\approx w^\top \phi(i,u)\)'
+      - '\(Q(i,u)\approx \max_m w_m \phi_m(i,u)\)'
+      - '\(Q(i,u)\approx \phi(i,u)^\top \phi(i,u)\)'
+      - '\(Q(i,u)\approx \sum_j P_{ij}(u)V(j)\)'
+    correct_choice: 0
+    explanation: 'The approximation is linear in the feature vector and the shared weight vector. The other choices either change the model class or replace it with a Bellman term.'
+    citation:
+      source_file: lecture-09.pdf
+      page: 1
+    tags:
+      - linear-function-approximation
+  - id: lec9-why-learn-w
+    prompt: 'Why does the lecture emphasize learning \(w\) instead of learning every \(Q(i,u)\) entry separately?'
+    choices:
+      - 'When the feature dimension \(M\) is much smaller than \(|S||A|\), learning \(w\) reduces complexity and can generalize to unseen state-action pairs'
+      - 'Because the Bellman equation is valid only for parameter vectors'
+      - 'Because function approximation makes the action set finite automatically'
+      - 'Because transition probabilities are no longer needed in any RL method'
+    correct_choice: 0
+    explanation: 'The point of approximation is compression plus generalization. It does not make Bellman equations disappear, and it does not magically eliminate every modeling challenge.'
+    citation:
+      source_file: lecture-09.pdf
+      page: 1
+    tags:
+      - linear-function-approximation
+  - id: lec9-linear-td-error
+    prompt: 'Which temporal-difference expression does the lecture write for Q-learning with linear function approximation?'
+    choices:
+      - '\(\delta_k(\tilde w)=r(x_k,u_k)+\alpha\max_v \tilde w^\top \phi(x_{k+1},v)-\tilde w^\top \phi(x_k,u_k)\)'
+      - '\(\delta_k(\tilde w)=r(x_k,u_k)+\alpha \tilde w^\top \phi(x_{k+1},u_{k+1})-\tilde w^\top \phi(x_k,u_k)\)'
+      - '\(\delta_k(\tilde w)=\max_v \tilde w^\top \phi(x_k,v)-\tilde w^\top \phi(x_k,u_k)\)'
+      - '\(\delta_k(\tilde w)=r(x_k,u_k)-\tilde w^\top \phi(x_{k+1},u_k)\)'
+    correct_choice: 0
+    explanation: 'The lecture first writes the off-policy Q-learning version with a max over next actions. The fixed-policy version later replaces that max with the feature value of the next sampled action under \(\mu\).'
+    citation:
+      source_file: lecture-09.pdf
+      page: 1
+    tags:
+      - linear-function-approximation
+      - q-learning
+  - id: lec9-linear-q-update-formula-id
+    prompt: 'Which algorithm is most directly associated with the weight update \(\tilde w \leftarrow \tilde w + \beta_k\,\delta_k(\tilde w)\,\phi(x_k,u_k)\) in the lecture?'
+    choices:
+      - 'Q-learning with linear function approximation'
+      - 'REINFORCE'
+      - 'Value iteration'
+      - 'UCB'
+    correct_choice: 0
+    explanation: 'This is the semi-gradient-style linear Q-learning update derived from the TD error. REINFORCE and UCB update entirely different objects, and value iteration is not sample-based.'
+    citation:
+      source_file: lecture-09.pdf
+      page: 1
+    tags:
+      - linear-function-approximation
+      - q-learning
+  - id: lec9-fixed-policy-delta-form
+    prompt: 'For the fixed-policy convergence result, which TD expression does the lecture use?'
+    choices:
+      - '\(\delta_k(\tilde w)=r(x_k,u_k)+\alpha \tilde w^\top \phi(x_{k+1},u_{k+1})-\tilde w^\top \phi(x_k,u_k)\)'
+      - '\(\delta_k(\tilde w)=r(x_k,u_k)+\alpha \max_v \tilde w^\top \phi(x_{k+1},v)-\tilde w^\top \phi(x_k,u_k)\)'
+      - '\(\delta_k(\tilde w)=\tilde w^\top \phi(x_{k+1},u_{k+1})-\tilde w^\top \phi(x_k,u_k)\)'
+      - '\(\delta_k(\tilde w)=r(x_k,u_k)-\alpha \tilde w^\top \phi(x_k,u_k)\)'
+    correct_choice: 0
+    explanation: 'Under a fixed policy \(\mu\), the next action is the one generated by \(\mu\), so the update uses \((x_{k+1},u_{k+1})\) rather than a max over actions. That is the same-family distinction the lecture highlights.'
+    citation:
+      source_file: lecture-09.pdf
+      page: 1
+    tags:
+      - linear-function-approximation
+      - policy-evaluation
+  - id: lec9-wstar-characterization
+    prompt: 'What high-level condition does the lecture say we expect \(w^*\) to satisfy at the fixed-policy limit?'
+    choices:
+      - '\(\mathbb{E}[\delta(w^*)\phi(x,u)]=0\)'
+      - '\(\mathbb{E}[\delta(w^*)]=0\) with no feature weighting'
+      - '\(\max_u Q_{w^*}(i,u)=0\) for every state'
+      - '\(\nabla_w \log \pi_w(u\mid x)=0\) for every sample'
+    correct_choice: 0
+    explanation: 'The lecture motivates the limiting parameter by requiring the TD error to be orthogonal to the feature directions on average. That is more informative than merely setting the mean TD error to zero.'
+    citation:
+      source_file: lecture-09.pdf
+      page: 1
+    tags:
+      - linear-function-approximation
+  - id: lec9-projected-bellman-equation
+    prompt: 'Which equation matches the lecture''s projected Bellman characterization of \(w^*\)?'
+    choices:
+      - '\(\Phi \Pi_\mu \big(T_\mu(\Phi w^*)-\Phi w^*\big)=0\)'
+      - '\(T_\mu(\Phi w^*)-\Phi w^*=0\)'
+      - '\(\Pi_\mu \Phi = T_\mu\)'
+      - '\(\Phi w^*=V^*\) for every MDP exactly'
+    correct_choice: 0
+    explanation: 'With function approximation, the exact Bellman equation usually cannot be solved inside the feature space, so the lecture replaces it with a projected condition. The exact zero-Bellman-error statement is the tempting but stronger distractor.'
+    citation:
+      source_file: lecture-09.pdf
+      page: 1
+    tags:
+      - linear-function-approximation
+      - projected-bellman-equation
+  - id: lec9-orthogonality-meaning
+    prompt: 'What does the condition \(\Phi \Pi_\mu \big(T_\mu(\Phi w^*)-\Phi w^*\big)=0\) mean geometrically in the lecture?'
+    choices:
+      - 'The Bellman error is orthogonal to the feature space, equivalently its projection onto the feature space is zero'
+      - 'The Bellman error itself is exactly zero in every state'
+      - 'The feature vectors are orthogonal to each other under any distribution'
+      - 'The transition matrix is orthogonal in the linear-algebra sense'
+    correct_choice: 0
+    explanation: 'The lecture is careful here: function approximation usually prevents exact Bellman consistency. What vanishes is the projection of the Bellman error onto the feature span.'
+    citation:
+      source_file: lecture-09.pdf
+      page: 1
+    tags:
+      - linear-function-approximation
+      - projected-bellman-equation
+  - id: lec9-linear-q-computation
+    prompt: 'If \(w=(1,2)\) and \(\phi(i,u)=(3,-1)\), what approximate action value does the model \(Q(i,u)\approx w^\top \phi(i,u)\) assign?'
+    choices:
+      - '\(1\)'
+      - '\(5\)'
+      - '\(-1\)'
+      - '\(-5\)'
+    correct_choice: 0
+    explanation: 'The inner product is \(1\cdot 3 + 2\cdot(-1)=1\). This is a simple arithmetic check that still tests the representation actually used by the approximation.'
+    citation:
+      source_file: lecture-09.pdf
+      page: 1
+    tags:
+      - linear-function-approximation
+      - computation
+  - id: lec9-divergence-message
+    prompt: 'What is the main lesson of the divergence example at the end of the lecture?'
+    choices:
+      - 'Even an on-policy linear TD-style method can diverge under function approximation, despite the true value function being well defined'
+      - 'Function approximation guarantees exact convergence whenever rewards are zero'
+      - 'Divergence can occur only because the behavior policy is off-policy'
+      - 'The projected Bellman equation always implies the exact Bellman equation'
+    correct_choice: 0
+    explanation: 'The example is meant to be a cautionary note: approximation changes the problem enough that stability is no longer automatic. Zero rewards and on-policy sampling do not, by themselves, save the update.'
+    citation:
+      source_file: lecture-09.pdf
+      page: 1
+    tags:
+      - linear-function-approximation
