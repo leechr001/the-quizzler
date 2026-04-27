@@ -76,6 +76,6 @@ The app uses a built-in lightweight YAML parser so it can stay dependency-free a
 - Questions are filtered by any selected tag
 - No tags are selected by default; common tags are shown first, while narrow tags are available under specific tags or by search
 - Choices are reshuffled every time a question appears
-- Missed questions return after 3 other questions
+- Missed questions return on expanding gaps: after 1, then 4, then 10 other questions when enough other questions remain
 - A missed question must be answered correctly 3 times in a row to leave the session
 - Closing the browser resets the current session

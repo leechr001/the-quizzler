@@ -1335,20 +1335,6 @@ questions:
       page: 93
     tags:
       - ucb-sarsa
-  - id: ch10-regret-decomposition
-    prompt: After regret decomposition, the first term (10.1) compares an optimal-policy Q quantity with an optimistic Q estimate. What does this term compare?
-    choices:
-      - The Q-value under the optimal policy versus the optimistic estimate of the current policy's Q-value
-      - The UCB bonus versus the learning rate
-      - The stationary distributions of two Markov chains
-      - The critic loss versus the actor loss
-    correct_choice: 0
-    explanation: The decomposition separates regret into an optimism term and an estimation-error term. The first term measures whether optimistic estimates are high enough to dominate the optimal Q-values.
-    citation:
-      source_file: RL_book.pdf
-      page: 93
-    tags:
-      - ucb-sarsa
   - id: ch10-optimism-lemma
     prompt: Lemma 10.2.1 is the optimism lemma relating true policy Q-values \(Q_h^\pi(x,a)\) to estimates \(\tilde Q_{k,h}(x,a)\). What does it state, with high probability?
     choices:
@@ -1858,20 +1844,6 @@ questions:
       page: 1
     tags:
       - performance-difference-lemma
-  - id: final-ucb-bandit-01
-    prompt: The selection rule \(i_k\in\arg\max_i\{\hat\mu_i(k)+\sqrt{2\log k/N_i(k)}\}\) is the action rule for which bandit algorithm?
-    choices:
-      - UCB
-      - "\\(\\epsilon\\)-greedy"
-      - REINFORCE
-      - DPO
-    correct_choice: 0
-    explanation: 'UCB chooses the arm with the largest upper-confidence index: empirical mean plus uncertainty bonus.'
-    citation:
-      source_file: final_exam_topics
-      page: 1
-    tags:
-      - bandits
   - id: final-ucb-bandit-02
     prompt: Why does UCB typically pull each arm once before using \(\hat\mu_i(k)+\sqrt{2\log k/N_i(k)}\)?
     choices:
@@ -2959,7 +2931,7 @@ questions:
       source_file: major_topic_hard_pass
       page: 1
   - id: hard-q-learning-01
-    prompt: An exploratory behavior policy generates \((x,u,r,x^+)\), but the target uses \(\max_v Q(x^+,v)\). Which quantity is the update trying to approximate at \((x,u)\)?
+    prompt: An exploratory behavior policy generates \((x,u,r,x^+)\), but the target in Q-learning uses \(\max_v Q(x^+,v)\). Which quantity is the update trying to approximate at \((x,u)\)?
     choices:
       - The Bellman-optimality target for \(Q^*\)
       - The Bellman-expectation target for the behavior policy
@@ -3168,20 +3140,6 @@ questions:
     citation:
       source_file: major_topic_hard_pass
       page: 1
-  - id: hard-policy-gradient-01
-    prompt: A naive differentiation of \(J(w)\) seems to involve \(\nabla_w \rho_w(x)\), the derivative of the discounted state distribution. Which theorem is used to avoid carrying that derivative explicitly?
-    choices:
-      - The policy gradient theorem
-      - The performance difference lemma
-      - The contraction mapping theorem
-      - Weak duality
-    correct_choice: 0
-    explanation: The policy gradient theorem rewrites the gradient so that the troublesome derivative of the visitation distribution does not need to be handled explicitly. The other results solve different problems.
-    tags:
-      - policy-gradient
-    citation:
-      source_file: major_topic_hard_pass
-      page: 1
   - id: hard-policy-gradient-02
     prompt: Which property of a baseline \(b(x)\) is essential for \(\mathbb{E}[\nabla_w\log\pi_w(u|x)b(x)] = 0\)?
     choices:
@@ -3239,7 +3197,7 @@ questions:
       source_file: major_topic_hard_pass
       page: 1
   - id: hard-reinforce-03
-    prompt: If the same full-episode return \(G_0\) is used at every time step instead of reward-to-go \(G_t\), what is the main effect?
+    prompt: In the REINFORCE algorithm, if the same full-episode return \(G_0\) is used at every time step instead of reward-to-go \(G_t\), what is the main effect?
     choices:
       - The estimator stays unbiased but usually has higher variance
       - The estimator becomes exactly equal to natural policy gradient
@@ -3912,22 +3870,6 @@ questions:
     tags:
       - policy-gradient
       - deterministic-policy-gradient
-  - id: lec15-dpg-chain-rule-computation
-    prompt: 'Under the deterministic policy gradient term \(\nabla_a Q(s,a)\vert_{a=\mu_\theta(s)}\,\nabla_\theta \mu_\theta(s)\), suppose \(Q(s,a)=2a+s\) and \(\mu_\theta(s)=\theta s\). At state \(s=1\), what value does this product take?'
-    choices:
-      - '\(1\)'
-      - '\(2\)'
-      - '\(2\theta+1\)'
-      - '\(\theta\)'
-    correct_choice: 1
-    explanation: 'This is a direct instantiation of the deterministic policy gradient chain rule. Here \(\nabla_a Q(s,a)=2\) and \(\nabla_\theta \mu_\theta(1)=1\), so the actor-side product is \(2\).'
-    citation:
-      source_file: lecture-15.pdf
-      page: 1
-    tags:
-      - policy-gradient
-      - deterministic-policy-gradient
-      - computation
   - id: lec15-ddpg-critic-target
     prompt: 'In DDPG, which target is used to train the critic \(Q_w(s,a)\) by temporal difference?'
     choices:
@@ -4594,7 +4536,7 @@ questions:
     tags:
       - transformers
   - id: lec19-next-token-distribution
-    prompt: 'After the final transformer representation of the last token is passed through a linear layer and softmax, what object is obtained?'
+    prompt: 'During GPT training, after the final transformer representation of the last token is passed through a linear layer and softmax, what object is obtained?'
     choices:
       - 'A distribution over the vocabulary for the next token'
       - 'A posterior over human preference labels'
@@ -4862,7 +4804,7 @@ questions:
     tags:
       - zeroth-order-optimization
   - id: lec21-gaussian-smoothing-theorem
-    prompt: 'If \(f_\mu(x)=\mathbb{E}_u[f(x+\mu u)]\) with \(u\sim \mathcal{N}(0,I)\), what conclusion does the lecture prove about \(g_\mu(x;u)\)?'
+    prompt: 'Let \[g_\mu(x;u):=\frac{f(x_k+\mu u_k\) - f_(x_k)}{\mu}u_k\] be the gradient estimator of a zeroth order optimizer. If \(f_\mu(x)=\mathbb{E}_u[f(x+\mu u)]\) with \(u\sim \mathcal{N}(0,I)\), what is the closed form for \(g_\mu(x;u)\)?'
     choices:
       - '\(\nabla f_\mu(x)=\mathbb{E}_u[g_\mu(x;u)]\)'
       - '\(\nabla f(x)=\mathbb{E}_u[g_\mu(x;u)]\) for every \(\mu>0\)'
@@ -5861,20 +5803,6 @@ questions:
       page: 1
     tags:
       - policy-gradient
-  - id: lec12-gibbs-score-family
-    prompt: 'For a Gibbs policy, which expression belongs to the same concept family as the score function and is correct?'
-    choices:
-      - '\(\nabla_w \log \pi_w(u\mid x)=\phi(x,u)-\mathbb{E}_{\pi_w}[\phi(x,\cdot)]\)'
-      - '\(\nabla_w \log \pi_w(u\mid x)=\frac{u-\mu_w(x)}{\sigma^2}\phi(x)\)'
-      - '\(\nabla_w \log \pi_w(u\mid x)=Q_w(x,u)-V_w(x)\)'
-      - '\(\nabla_w \log \pi_w(u\mid x)=\nabla_w Q_w(x,u)\)'
-    correct_choice: 0
-    explanation: 'The first option is the Gibbs-policy score. The Gaussian-score formula is a close same-family distractor, while the other two are useful policy-gradient quantities but not score functions.'
-    citation:
-      source_file: lecture-12-13.pdf
-      page: 1
-    tags:
-      - policy-gradient
   - id: lec12-reinforce-formula-id
     prompt: 'Which algorithm updates parameters using episode returns in the form \(w\leftarrow w+\beta \alpha^k \nabla_w \log \pi_w(u_k\mid x_k)\sum_{\tau=k}^{T-1}\alpha^{\tau-k} r(x_\tau,u_\tau)\)?'
     choices:
@@ -6437,20 +6365,6 @@ questions:
     tags:
       - contraction-mapping
       - policy-evaluation
-  - id: lec6-why-supnorm-contraction
-    prompt: 'Why does the proof conclude \(\|T_\mu(x)-T_\mu(y)\|_\infty \le \alpha\|x-y\|_\infty\)?'
-    choices:
-      - 'Because each row of the transition matrix sums to 1, so \(P_\mu\) cannot amplify the sup norm beyond its largest component'
-      - 'Because rewards are deterministic under every policy'
-      - 'Because \(\mu\) is an optimal policy'
-      - 'Because \(P_\mu\) is always diagonal'
-    correct_choice: 0
-    explanation: 'The row-stochastic structure of \(P_\mu\) is what makes the weighted sum of components stay within the sup-norm envelope. Optimality or diagonal structure is not needed.'
-    citation:
-      source_file: lecture-06.pdf
-      page: 1
-    tags:
-      - contraction-mapping
   - id: lec6-contraction-bound-computation
     prompt: 'If \(T\) is a \(\tfrac13\)-contraction and \(\|x-y\|_\infty=6\), what upper bound does the theorem give on \(\|T(x)-T(y)\|_\infty\)?'
     choices:
@@ -6467,7 +6381,7 @@ questions:
       - contraction-mapping
       - computation
   - id: lec6-cauchy-sequence-role
-    prompt: 'In the convergence proof, why is showing \((x_n)\) is a Cauchy sequence important?'
+    prompt: 'In the proof of the contraction mapping theorem, why is showing \((x_n)\) is a Cauchy sequence important?'
     choices:
       - 'Because completeness of the space then guarantees the iterates converge to some limit \(x^*\) in the same space'
       - 'Because every Cauchy sequence is eventually constant'
@@ -6481,7 +6395,7 @@ questions:
     tags:
       - contraction-mapping
   - id: lec6-fixed-point-step
-    prompt: 'After obtaining \(x_n\to x^*\), why can the proof conclude \(T(x^*)=x^*\)?'
+    prompt: 'In the proof of the contraction mapping theorem, we use that \(x_n\to x^*\) implies \(T(x^*)=x^*\). Why does this statement hold?'
     choices:
       - 'Because a contraction is Lipschitz, hence continuous, so \(T(x_n)\to T(x^*)\) while \(T(x_n)=x_{n+1}\to x^*\)'
       - 'Because every limit point of an iterative method is automatically a fixed point'
@@ -6565,20 +6479,6 @@ questions:
       page: 1
     tags:
       - value-iteration
-  - id: lec7-why-contraction
-    prompt: 'Why do the monotonicity fact and the shift identity together imply \(\|T(V_1)-T(V_2)\|_\infty \le \alpha \|V_1-V_2\|_\infty\)?'
-    choices:
-      - 'They let the proof sandwich \(V_1\) between \(V_2-be\) and \(V_2+be\), then propagate that sandwich through \(T\)'
-      - 'They show the rewards are deterministic and therefore exact'
-      - 'They imply \(T\) is linear in \(V\)'
-      - 'They prove the maximizing action is unique at every state'
-    correct_choice: 0
-    explanation: 'The proof sets \(b=\|V_1-V_2\|_\infty\), then compares \(T(V_1)\) to the shifted bounds on \(T(V_2)\). That is the mechanism behind the contraction estimate.'
-    citation:
-      source_file: lecture-07-08.pdf
-      page: 1
-    tags:
-      - value-iteration
   - id: lec7-one-step-backup-computation
     prompt: 'Suppose one state has two actions with values \(\mathbb{E}[r(i,a)]+\alpha\sum_j P_{ij}(a)V(j)=3\) and \(\mathbb{E}[r(i,b)]+\alpha\sum_j P_{ij}(b)V(j)=2\). What is \(T(V)(i)\)?'
     choices:
@@ -6639,8 +6539,7 @@ questions:
     tags:
       - value-iteration
   - id: lec7-essential-assumption
-    prompt: 'Which assumption is essential for the lecture''s contraction-based proof of value-iteration convergence?'
-    choices:
+    prompt: Which assumption is a required assumption for the convergence of value-iteration?
       - '\(\alpha\in[0,1)\)'
       - 'Every maximizing action is unique'
       - 'The optimal policy is stochastic'
@@ -6684,7 +6583,7 @@ questions:
       - q-learning
       - convergence
   - id: lec8-empirical-transition-fraction
-    prompt: 'In the convergence proof, what does \(\hat p_{ij}(u)\) represent?'
+    prompt: 'In the simplified proof of the convergence of Q-learning, what does \(\hat p_{ij}(u)\) represent?'
     choices:
       - 'The empirical fraction of times the next state is \(j\) among sampled experiences whose current pair is \((i,u)\)'
       - 'The exact transition probability under the model'
@@ -6698,23 +6597,8 @@ questions:
     tags:
       - q-learning
       - convergence
-  - id: lec8-noise-term-mean
-    prompt: 'Why does the proof conclude \(\mathbb{E}[W_k\mid Q_k]=0\) for the noise term \(W_k\)?'
-    choices:
-      - 'Because \(\mathbb{E}[\hat p_{ij}(u)]=p_{ij}(u)\), so the empirical-transition error has zero conditional mean'
-      - 'Because \(Q_k=Q^*\) at every step of the proof'
-      - 'Because the rewards are all zero in every MDP'
-      - 'Because the maximization error vanishes exactly for finite \(N\)'
-    correct_choice: 0
-    explanation: 'The stochastic term comes from replacing the true transition probabilities with empirical fractions. Its conditional mean is zero because those empirical fractions are unbiased for the true probabilities.'
-    citation:
-      source_file: lecture-08.pdf
-      page: 1
-    tags:
-      - q-learning
-      - convergence
   - id: lec8-max-difference-inequality
-    prompt: 'Which inequality does the lecture use to control the nonlinear max term in the convergence proof?'
+    prompt: 'Which inequality does the lecture use to control the nonlinear max term in the simplified proof of Q-learning convergence?'
     choices:
       - '\(\left|\max_v Q_k(j,v)-\max_v Q^*(j,v)\right| \le \max_v \left|Q_k(j,v)-Q^*(j,v)\right|\)'
       - '\(\max_v \left|Q_k(j,v)-Q^*(j,v)\right| \le \left|\max_v Q_k(j,v)-\max_v Q^*(j,v)\right|\)'
@@ -6863,7 +6747,7 @@ questions:
       - linear-function-approximation
       - q-learning
   - id: lec9-fixed-policy-delta-form
-    prompt: 'For the fixed-policy convergence result, which TD expression does the lecture use?'
+    prompt: 'In the proof for fixed-policy convergence of Q-learning with linear function approximation, what is the TD expression?'
     choices:
       - '\(\delta_k(\tilde w)=r(x_k,u_k)+\alpha \tilde w^\top \phi(x_{k+1},u_{k+1})-\tilde w^\top \phi(x_k,u_k)\)'
       - '\(\delta_k(\tilde w)=r(x_k,u_k)+\alpha \max_v \tilde w^\top \phi(x_{k+1},v)-\tilde w^\top \phi(x_k,u_k)\)'

@@ -4,6 +4,8 @@ const builtInQuestionBank = {
 };
 
 const maxCommonTags = 15;
+// Intervening-question counts for a classic expanding retrieval cadence.
+const reviewCooldownsByStreak = [1, 4, 10];
 
 const schemaExample = `questions:
   - id: unique-short-id
@@ -631,7 +633,7 @@ function submitAnswer(displayIndex) {
         reviewMessage = "Mastered";
         badgeText = "Recovery complete";
       } else {
-        existingReview.cooldown = 3;
+        existingReview.cooldown = getReviewCooldown(existingReview.streak);
         existingReview.ticket = ++session.reviewTicket;
         reviewMessage = `Progress ${existingReview.streak}/3`;
         badgeText = `Recovery streak ${existingReview.streak}/3`;
@@ -647,7 +649,7 @@ function submitAnswer(displayIndex) {
     session.mastered.delete(question.id);
     session.reviewStates.set(question.id, {
       streak: 0,
-      cooldown: 3,
+      cooldown: getReviewCooldown(0),
       ticket: ++session.reviewTicket,
     });
     reviewMessage = "Needs review";
@@ -663,6 +665,11 @@ function submitAnswer(displayIndex) {
   };
 
   render();
+}
+
+function getReviewCooldown(streak) {
+  const scheduleIndex = Math.min(streak, reviewCooldownsByStreak.length - 1);
+  return reviewCooldownsByStreak[scheduleIndex];
 }
 
 function skipReviewForCurrentQuestion() {
