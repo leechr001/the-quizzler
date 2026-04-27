@@ -677,11 +677,8 @@ function skipReviewForCurrentQuestion() {
   session.questionsNeedingReview.delete(question.id);
   session.mastered.add(question.id);
   session.wrongAttempts = Math.max(0, session.wrongAttempts - 1);
-  session.answerState.reviewMessage = "Misclick ignored";
-  session.answerState.badgeText = "Fresh question";
-  session.answerState.reviewSkipped = true;
 
-  render();
+  advanceSession();
 }
 
 function selectNextQuestion() {
